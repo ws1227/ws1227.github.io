@@ -7,7 +7,7 @@
                 "paths": [ "/wwdc/news/", "/videos/wwdc/2015/*"]
             },
             {
-                "appID": "7KG543MFQR.com.workDemo.wangsen",
+                "appID": "L2LYHXGC7E.com.wangsen.demo",
                 "paths": [ "*" ]
             }
         ]
