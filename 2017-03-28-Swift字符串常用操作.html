@@ -90,19 +90,28 @@
 
 
 <meta name="description" content="swift 中关于取子串有4 个方法
-str.index(after: String.Index)str.index(before: String.Index)str.index(String.Index, offsetBy: String.IndexDistance)str.index(String.Index, offsetBy: String.IndexDistance, limitedBy">
+str.index(after: String.Index)
+str.index(before: String.Index)
+str.index(String.Index, offsetBy: String.IndexDistance)
+str.index(String.Index, offsetBy: String.IndexDistance, limite">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Swift字符串常用操作">
 <meta property="og:url" content="wangsen.website/2017-03-28-Swift字符串常用操作.html">
 <meta property="og:site_name" content="王森博客">
 <meta property="og:description" content="swift 中关于取子串有4 个方法
-str.index(after: String.Index)str.index(before: String.Index)str.index(String.Index, offsetBy: String.IndexDistance)str.index(String.Index, offsetBy: String.IndexDistance, limitedBy">
+str.index(after: String.Index)
+str.index(before: String.Index)
+str.index(String.Index, offsetBy: String.IndexDistance)
+str.index(String.Index, offsetBy: String.IndexDistance, limite">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-03-28T03:36:29.000Z">
+<meta property="og:updated_time" content="2017-03-28T03:57:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swift字符串常用操作">
 <meta name="twitter:description" content="swift 中关于取子串有4 个方法
-str.index(after: String.Index)str.index(before: String.Index)str.index(String.Index, offsetBy: String.IndexDistance)str.index(String.Index, offsetBy: String.IndexDistance, limitedBy">
+str.index(after: String.Index)
+str.index(before: String.Index)
+str.index(String.Index, offsetBy: String.IndexDistance)
+str.index(String.Index, offsetBy: String.IndexDistance, limite">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
@@ -444,12 +453,59 @@ str.index(after: String.Index)str.index(before: String.Index)str.index(String.In
 
       
         <p></p><p>swift 中关于取子串有4 个方法</p><p></p>
-<p><pre><code>str.index(after: String.Index)<br>str.index(before: String.Index)<br>str.index(String.Index, offsetBy: String.IndexDistance)<br>str.index(String.Index, offsetBy: String.IndexDistance, limitedBy: String.Index)</code></pre></p>
-<p></p><p>分别是什么, 该如何使用?<br>下面来看看<br>本例中, 我们创建一个字符串”Hello, playground” , 如下</p><p></p>
-<p><pre><code class="swift">var str = “Hello, playground”</code></pre></p>
-<p><div class="image-package"><br><img src="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2"><br><div class="image-caption">字符索引</div><br></div></p>
-<p></p><h3>startIndex 和 endIndex</h3><p></p>
-<ul><br><li>startIndex  是第一个字符的索引, 也就是</li><br><li>endIndex 是最后一个字符索引 +1</li><br></ul><br><pre><code>// character<br>str[str.startIndex] // H<br>str[str.endIndex]   // error: after last character<br><br>// range<br>let range = str.startIndex ..&lt; str.endIndex<br>str[range]  // “Hello, playground”</code></pre><br><h3>after</h3><br><p><code>index(after: String.Index)</code><br>after 指向给定索引后面的一个索引(类似与 + 1)</p><br><pre><code>// character<br>let index = str.index(after: str.startIndex)<br>str[index]  // “e”<br><br>// range<br>let range = str.index(after: str.startIndex)..&lt;str.endIndex<br>str[range]  // “ello, playground”</code></pre><br><h3>before</h3><br><p><code>index(before: String.Index)</code><br>before 指向给定索引之前的一个索引(类似与 - 1)</p><br><pre><code>// character<br>let index = str.index(before: str.endIndex)<br>str[index]  // d<br><br>// range<br>let range = str.startIndex ..&lt; str.index(before: str.endIndex)<br>str[range]  // Hello, playgroun</code></pre><br><h3>offsetBy</h3><br><p><code>index(String.Index, offsetBy: String.IndexDistance)</code><br>offsetBy 的值可以为正或是负, 正则表示向后, 负则相反.别被offsetBy 的 String.IndexDistance 类型吓到, 本身其实是一个 Int.(类似于+n 和 -n)</p><br><pre><code>// character<br>let index = str.index(str.startIndex, offsetBy: 7)<br>str[index]  // p<br><br>// range<br>let start = str.index(str.startIndex, offsetBy: 7)<br>let end = str.index(str.endIndex, offsetBy: -6)<br>let range = start ..&lt; end<br>str[range]  // play</code></pre><br><h3>limitedBy</h3><br><p><code>index(String.Index, offsetBy: String.IndexDistance, limitedBy: String.Index)</code></p><br><p>limitedBy 在 offset 过大导致溢出错误的时候很有用.这个返回值是一个可选值, 如果 offsetBy 超过了 limitBy, 则返回 nil.</p><br><pre><code>// character<br>if let index = str.index(str.startIndex, offsetBy: 7, limitedBy: str.endIndex) {<br>str[index]  // p<br>}</code></pre><br><p>上面这段代码中如果offset 设置为 77, 返回值就是 nil, if 中的代码就会跳过</p><br><p>所以如果你要取子串的正确姿势是什么?</p><br><ul><br><li>取某个位置之后的所有字符<br><code>str.substring(from: str.index(str.startIndex, offsetBy: 7)) // playground</code><br></li><br><li>取倒数某个位置之后的所有字符<br><code>str.substring(from: str.index(str.endIndex, offsetBy: -10))  //playground</code><br></li><br><li>取某个位置之前的所有字符<br><code>str.substring(to: str.index(str.startIndex, offsetBy: 5)) //Hello</code><br></li><br><li>取倒数某个位置之前的所有字符<br><code>str.substring(to: str.index(str.endIndex, offsetBy: -12)) //Hello</code><br></li><br><li>取中间的某个字符串<br><code>str.substring(with: str.index(str.startIndex, offsetBy: 7) ..&lt; str.index(str.endIndex, offsetBy: -6)) // play</code><br></li><br></ul>
+<pre><code>str.index(after: String.Index)
+str.index(before: String.Index)
+str.index(String.Index, offsetBy: String.IndexDistance)
+str.index(String.Index, offsetBy: String.IndexDistance, limitedBy: String.Index)</code></pre>
+<p>分别是什么, 该如何使用?<br>下面来看看<br>本例中, 我们创建一个字符串"Hello, playground" , 如下</p>
+<pre><code class="swift">var str = "Hello, playground"</code></pre>
+<div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2"><br><div class="image-caption">字符索引</div>
+</div>
+<h3>startIndex 和 endIndex</h3>
+<ul>
+<li>startIndex  是第一个字符的索引, 也就是</li>
+<li>endIndex 是最后一个字符索引 +1</li>
+</ul>
+<pre><code>// character
+str[str.startIndex] // H
+str[str.endIndex]   // error: after last character
+
+// range
+let range = str.startIndex ..&lt; str.endIndex
+str[range]  // "Hello, playground"</code></pre>
+<h3>after</h3>
+<p><code>index(after: String.Index)</code><br>after 指向给定索引后面的一个索引(类似与 + 1)</p>
+<pre><code>// character
+let index = str.index(after: str.startIndex)
+str[index]  // "e"
+
+// range
+let range = str.index(after: str.startIndex)..&lt;str.endIndex
+str[range]  // "ello, playground"</code></pre>
+<h3>before</h3>
+<p><code>index(before: String.Index)</code><br>before 指向给定索引之前的一个索引(类似与 - 1)</p>
+<pre><code>// character
+let index = str.index(before: str.endIndex)
+str[index]  // d
+
+// range
+let range = str.startIndex ..&lt; str.index(before: str.endIndex)
+str[range]  // Hello, playgroun</code></pre>
+
+<a id="more"></a>
+<h3>offsetBy</h3>
+
+<p></p><p><code>index(String.Index, offsetBy: String.IndexDistance)</code><br>offsetBy 的值可以为正或是负, 正则表示向后, 负则相反.别被offsetBy 的 String.IndexDistance 类型吓到, 本身其实是一个 Int.(类似于+n 和 -n)</p><p></p>
+<p><pre><code>// character<br>let index = str.index(str.startIndex, offsetBy: 7)<br>str[index]  // p</code></pre></p>
+<p>// range<br>let start = str.index(str.startIndex, offsetBy: 7)<br>let end = str.index(str.endIndex, offsetBy: -6)<br>let range = start ..&lt; end<br>str[range]  // play</p>
+<p></p><h3>limitedBy</h3><p></p>
+<p></p><p><code>index(String.Index, offsetBy: String.IndexDistance, limitedBy: String.Index)</code></p><p></p>
+<p></p><p>limitedBy 在 offset 过大导致溢出错误的时候很有用.这个返回值是一个可选值, 如果 offsetBy 超过了 limitBy, 则返回 nil.</p><p></p>
+<p><pre><code>// character<br>if let index = str.index(str.startIndex, offsetBy: 7, limitedBy: str.endIndex) {<br>str[index]  // p<br>}</code></pre></p>
+<p></p><p>上面这段代码中如果offset 设置为 77, 返回值就是 nil, if 中的代码就会跳过</p><p></p>
+<p></p><p>所以如果你要取子串的正确姿势是什么?</p><p></p>
+<ul><br><li>取某个位置之后的所有字符<br><code>str.substring(from: str.index(str.startIndex, offsetBy: 7)) // playground</code><br></li><br><li>取倒数某个位置之后的所有字符<br><code>str.substring(from: str.index(str.endIndex, offsetBy: -10))  //playground</code><br></li><br><li>取某个位置之前的所有字符<br><code>str.substring(to: str.index(str.startIndex, offsetBy: 5)) //Hello</code><br></li><br><li>取倒数某个位置之前的所有字符<br><code>str.substring(to: str.index(str.endIndex, offsetBy: -12)) //Hello</code><br></li><br><li>取中间的某个字符串<br><code>str.substring(with: str.index(str.startIndex, offsetBy: 7) ..&lt; str.index(str.endIndex, offsetBy: -6)) // play</code><br></li><br></ul>
 
 
       
