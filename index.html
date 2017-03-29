@@ -324,6 +324,175 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="wangsen.website/2017-03-29-Swift函数与闭包的应用实例.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017-03-29-Swift函数与闭包的应用实例.html" itemprop="url">
+                  Swift函数与闭包的应用实例
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-29T18:34:49+08:00">
+                2017-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Swift/" itemprop="url" rel="index">
+                    <span itemprop="name">Swift</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017-03-29-Swift函数与闭包的应用实例.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017-03-29-Swift函数与闭包的应用实例.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017-03-29-Swift函数与闭包的应用实例.html" class="leancloud_visitors" data-flag-title="Swift函数与闭包的应用实例">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <hr>
+<div class="clear"></div><br>            <div id="cnblogs_post_body"><p>　　今天的博客算是比较基础的，还是那句话，基础这东西在什么时候都是最重要的。说到函数，只要是写过程序就肯定知道函数是怎么回事，今天就来讨论一下Swift中的函数的特性以及Swift中的闭包。今天的一些小实例中回类比一下Objective-C中的函数的写法等等。Swift中的函数还是有许多好用的特性的，比如输入参数，使用元组返回多个值， 定义形参名，设定默认参数以及可变参数等等一些好用的特性。而在Swift中的闭包就是Objective-C中的Block, 除了语法不通外，两者的用法是一样的。废话少说，开始今天的主题，先搞一搞Swift中的函数，然后在搞一搞Swift中的闭包。</p><br><p><span style="color: #008000; font-size: 18px;">　　一.Swift中的函数</span></p><br><p>　　　　1. 函数的定义与使用</p><br><p>　　　　　在介绍Swift中的函数之前，我想用Objective-C中的一个简单的加法函数来作为引子，然后类比着实现一下Swift中相同功能的函数。关于函数定义就比较简单了，就是一些语法的东西，下面的代码片段是Objc中求两个整数之和的函数，并返回两个数的和。</p><br><div class="cnblogs_code"><br><pre>-<span style="color: #000000;"> (NSInteger)sumNumber1:(NSInteger) number1<br>                number2:(NSInteger) number2 {<br>    </span><span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br>}</span></pre><br></div><br><p>　　　　函数的功能比较简单了，就是把两个整数传进来，然后返回两个整数的和。接下来将用Swift语言实现，也好通过这个实例来熟悉一下Swift语言中定义函数的语法。下方是Swift语言中求两个整数之和的函数。语法比较简单了，在Swift中定义函数，我们会使用到关键字<span style="color: #ff6600;">func</span>来声明函数。</p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> <span style="color: #008000;">//</span><span style="color: #008000;">函数定义</span><br><span style="color: #008080;">2</span> func sum (number1:Int, number2:Int) -&gt;<span style="color: #000000;"> Int{<br></span><span style="color: #008080;">3</span>     <span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br></span><span style="color: #008080;">4</span> }</pre><br></div><br><p>　　　　用文字来描述Swift定义基本函数的语法就是:<span style="color: #ff6600;"> func <span style="color: #008000;">函数名</span> （形参<span style="color: #008000;">列表</span>） -&gt; <span style="color: #008000;">返回值类型</span> { <span style="color: #008000;">函数体</span>}，<span style="color: #000000;">这样你就可以定义一个函数了。当然，函数定义时还有好多其他的用法，下面会详细介绍。上面函数的调用方法如下：</span></span></p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> let sumTwoNubmer = sum(<span style="color: #800080;">2</span>, number2: <span style="color: #800080;">3</span>);</pre><br></div><br><p>&nbsp;</p><br><p>　　　　2. 函数中的形参列表</p><br><p>　　　　关于函数中的形参列表还是有必要提上一嘴的，因为形参列表作为函数数据源之一，所以把参数列表好好的搞一搞还是很有必要的。参数列表也有很多好用的使用方式，接下来详细的介绍一下函数的形参列表。</p><br><p>　　　　(1) 默认的形参是常量（let）</p><br><p>　　　　　　在函数的形参列表中，默认的形参是常量。也就是相当于用<span style="color: #ff6600;">let</span>关键字对形参进行修饰了。我们可以做个试验，把上面加法函数做一个修改，在加法函数中对number1进行加1操作，你会得到一个错误，这个错误的大体意思就是&ldquo;number1是不可被修改的，因为它是let类型的常量&rdquo;。并且编译器还给人出了Fix-it（修复）的方案，就是在number1前面使用<span style="color: #ff6600;">var</span>关键字进行修饰，使其成为变量，这样才可以修改其值。</p><br><p>　　　　　　上面说这么多，一句话：形参默认是常量，如果你想让其是变量，那么你可以使用var关键字进行修饰，这样被关键字var修饰的变量在函数中就可以被修改。下方就是报的这个错误，和编译器提供的解决方案。（在Objc中默认可以在函数中改变形参的值）</p><br><p><img style="display: block; margin-left: auto; margin-right: auto;" src="http://images2015.cnblogs.com/blog/545446/201511/545446-20151116135154655-201247640.png" alt="" width="647" height="91" /></p><br><p>&nbsp;</p><br><p>　　　　（2）给形参命名</p><br><p>　　　　　　为了代码的可读性和可维护性，我们在定义函数时，需要为每个参数名一个名字，这样调用者见名知意，很容易就知道这个参数代表什么意思了。接下来还是在上述加法函数中进行修改，为每个参数名一个名字，并看一下调用方式。修改上面的函数，给第一个形参命名成numberOne, 第二个形参为numberTwo, 下方是修改后的函数。 紧接着sum()函数的调用方式也会有所改变，在调用函数时编译器会给出参数的名称，这样调用者一目了然。</p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> <span style="color: #008000;">//</span><span style="color: #008000;">函数定义</span><br><span style="color: #008080;">2</span> func sum (numberOne number1:Int, numberTwo number2:Int) -&gt;<span style="color: #000000;"> Int{<br></span><span style="color: #008080;">3</span>     <span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br></span><span style="color: #008080;">4</span> <span style="color: #000000;">}<br></span><span style="color: #008080;">5</span><br><span style="color: #008080;">6</span> let sumTwoNubmer = sum(numberOne: <span style="color: #800080;">10</span>, numberTwo: <span style="color: #800080;">20</span>);</pre><br></div><br><p>　　　　 &nbsp;调用上述函数时，下方是编译器给出的提示，一目了然呢。<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="http://images2015.cnblogs.com/blog/545446/201511/545446-20151116141632358-1326285688.png" alt="" width="401" height="119" /></p><br><p>　　　　　关于Swift中参数名的内容，要说明的是在Swift1.0的时候，你可以在参数前面添加上#号，然后参数名就与变量（或者常量）的名字相同，而Swift2.0后这个东西去掉了，因为默认就相当于Swift1.0中添加#号。</p><br><p>&nbsp;</p><br><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017-03-29-Swift函数与闭包的应用实例.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="wangsen.website/2017-03-28-Swift字符串常用操作.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -877,7 +1046,7 @@ str[range]  // Hello, playgroun</code></pre>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -899,7 +1068,7 @@ str[range]  // Hello, playgroun</code></pre>
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
