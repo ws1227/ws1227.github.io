@@ -73,7 +73,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Swift,字符串操作," />
+  <meta name="keywords" content="UITableViewCell复用," />
 
 
 
@@ -89,30 +89,22 @@
 
 
 
-<meta name="description" content="swift 中关于取子串有4 个方法
-str.index(after: String.Index)
-str.index(before: String.Index)
-str.index(String.Index, offsetBy: String.IndexDistance)
-str.index(String.Index, offsetBy: String.IndexDistance, limite">
+<meta name="description" content="解决TableViewCell和UICollectionViewCell使用过程中因为重用机制问题造成数据重复显示或者布局错乱问题。
+常规配置如下 当超过tableView显示的范围的时候 后面显示的内容将会和前面重复
+123456789101112131415161718192021// 这样配置的话超过页面显示的内容会重复出现- (UITableViewCell *)tableView:(UI">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Swift字符串常用操作">
-<meta property="og:url" content="wangsen.website/2017-03-28-Swift字符串常用操作.html">
+<meta property="og:title" content="解决TableViewCell和CollectionViewCell复用布局错乱问题">
+<meta property="og:url" content="wangsen.website/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html">
 <meta property="og:site_name" content="王森博客">
-<meta property="og:description" content="swift 中关于取子串有4 个方法
-str.index(after: String.Index)
-str.index(before: String.Index)
-str.index(String.Index, offsetBy: String.IndexDistance)
-str.index(String.Index, offsetBy: String.IndexDistance, limite">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2017-03-28T04:00:38.000Z">
+<meta property="og:description" content="解决TableViewCell和UICollectionViewCell使用过程中因为重用机制问题造成数据重复显示或者布局错乱问题。
+常规配置如下 当超过tableView显示的范围的时候 后面显示的内容将会和前面重复
+123456789101112131415161718192021// 这样配置的话超过页面显示的内容会重复出现- (UITableViewCell *)tableView:(UI">
+<meta property="og:updated_time" content="2017-03-30T10:10:54.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Swift字符串常用操作">
-<meta name="twitter:description" content="swift 中关于取子串有4 个方法
-str.index(after: String.Index)
-str.index(before: String.Index)
-str.index(String.Index, offsetBy: String.IndexDistance)
-str.index(String.Index, offsetBy: String.IndexDistance, limite">
-<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:title" content="解决TableViewCell和CollectionViewCell复用布局错乱问题">
+<meta name="twitter:description" content="解决TableViewCell和UICollectionViewCell使用过程中因为重用机制问题造成数据重复显示或者布局错乱问题。
+常规配置如下 当超过tableView显示的范围的时候 后面显示的内容将会和前面重复
+123456789101112131415161718192021// 这样配置的话超过页面显示的内容会重复出现- (UITableViewCell *)tableView:(UI">
 
 
 
@@ -140,13 +132,13 @@ str.index(String.Index, offsetBy: String.IndexDistance, limite">
 
 
 
-  <link rel="canonical" href="wangsen.website/2017-03-28-Swift字符串常用操作.html"/>
+  <link rel="canonical" href="wangsen.website/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html"/>
 
 
 
 
 
-  <title> Swift字符串常用操作 | 王森博客 </title>
+  <title> 解决TableViewCell和CollectionViewCell复用布局错乱问题 | 王森博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -337,7 +329,7 @@ str.index(String.Index, offsetBy: String.IndexDistance, limite">
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="wangsen.website/2017-03-28-Swift字符串常用操作.html">
+    <link itemprop="mainEntityOfPage" href="wangsen.website/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="王森">
@@ -358,7 +350,7 @@ str.index(String.Index, offsetBy: String.IndexDistance, limite">
             
             
               
-                Swift字符串常用操作
+                解决TableViewCell和CollectionViewCell复用布局错乱问题
               
             
           </h2>
@@ -373,8 +365,8 @@ str.index(String.Index, offsetBy: String.IndexDistance, limite">
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-28T11:34:25+08:00">
-                2017-03-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-30T17:47:01+08:00">
+                2017-03-30
               </time>
             
 
@@ -396,8 +388,8 @@ str.index(String.Index, offsetBy: String.IndexDistance, limite">
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Swift/" itemprop="url" rel="index">
-                    <span itemprop="name">Swift</span>
+                  <a href="/categories/OC/" itemprop="url" rel="index">
+                    <span itemprop="name">OC</span>
                   </a>
                 </span>
 
@@ -414,8 +406,8 @@ str.index(String.Index, offsetBy: String.IndexDistance, limite">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017-03-28-Swift字符串常用操作.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017-03-28-Swift字符串常用操作.html" itemprop="commentCount"></span>
+                <a href="/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -423,7 +415,7 @@ str.index(String.Index, offsetBy: String.IndexDistance, limite">
 
           
           
-             <span id="/2017-03-28-Swift字符串常用操作.html" class="leancloud_visitors" data-flag-title="Swift字符串常用操作">
+             <span id="/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html" class="leancloud_visitors" data-flag-title="解决TableViewCell和CollectionViewCell复用布局错乱问题">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -452,61 +444,19 @@ str.index(String.Index, offsetBy: String.IndexDistance, limite">
       
 
       
-        <p></p><p>swift 中关于取子串有4 个方法</p><p></p>
-<pre><code>str.index(after: String.Index)
-str.index(before: String.Index)
-str.index(String.Index, offsetBy: String.IndexDistance)
-str.index(String.Index, offsetBy: String.IndexDistance, limitedBy: String.Index)</code></pre>
-<p>分别是什么, 该如何使用?<br>下面来看看<br>本例中, 我们创建一个字符串"Hello, playground" , 如下</p>
-<pre><code class="swift">var str = "Hello, playground"</code></pre>
-<div class="image-package">
-<img src="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2"><br><div class="image-caption">字符索引</div>
-</div>
-<h3>startIndex 和 endIndex</h3>
-<ul>
-<li>startIndex  是第一个字符的索引, 也就是</li>
-<li>endIndex 是最后一个字符索引 +1</li>
-</ul>
-<pre><code>// character
-str[str.startIndex] // H
-str[str.endIndex]   // error: after last character
-
-// range
-let range = str.startIndex ..&lt; str.endIndex
-str[range]  // "Hello, playground"</code></pre>
-<h3>after</h3>
-<p><code>index(after: String.Index)</code><br>after 指向给定索引后面的一个索引(类似与 + 1)</p>
-<pre><code>// character
-let index = str.index(after: str.startIndex)
-str[index]  // "e"
-
-// range
-let range = str.index(after: str.startIndex)..&lt;str.endIndex
-str[range]  // "ello, playground"</code></pre>
-<h3>before</h3>
-<p><code>index(before: String.Index)</code><br>before 指向给定索引之前的一个索引(类似与 - 1)</p>
-<pre><code>// character
-let index = str.index(before: str.endIndex)
-str[index]  // d
-
-// range
-let range = str.startIndex ..&lt; str.index(before: str.endIndex)
-str[range]  // Hello, playgroun</code></pre>
-
+        <p>解决TableViewCell和UICollectionViewCell使用过程中因为重用机制问题造成数据重复显示或者布局错乱问题。</p>
+<p>常规配置如下 当超过tableView显示的范围的时候 后面显示的内容将会和前面重复</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">// 这样配置的话超过页面显示的内容会重复出现</div><div class="line">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</div><div class="line">&#123;</div><div class="line">    // 定义唯一标识</div><div class="line">    static NSString *CellIdentifier = @&quot;Cell&quot;;</div><div class="line">    // 通过唯一标识创建cell实例</div><div class="line">    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];</div><div class="line">    // 判断为空进行初始化  --（当拉动页面显示超过主页面内容的时候就会重用之前的cell，而不会再次初始化）</div><div class="line">    if (!cell) &#123;</div><div class="line">        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];</div><div class="line">    &#125;</div><div class="line">    // 对cell 进行简单地数据配置</div><div class="line">    cell.textLabel.text = @&quot;text&quot;;</div><div class="line">    cell.detailTextLabel.text = @&quot;text&quot;;</div><div class="line">    cell.imageView.image = [UIImage imageNamed:@&quot;4.png&quot;];</div><div class="line">    </div><div class="line">    return cell;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">//通过以下3方案可以解决</div></pre></td></tr></table></figure>
+<h3 id="方案一："><a href="#方案一：" class="headerlink" title="方案一："></a>方案一：</h3><p>  让每个cell都拥有一个对应的标识 这样做也会让cell无法重用 所以也就不会是重复显示了 显示内容比较多时内存占用也是比较多的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">/ /方案一  通过不让他重用cell 来解决重复显示 不同的是每个cell对应一个标识</div><div class="line">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</div><div class="line">&#123;</div><div class="line">    // 定义cell标识  每个cell对应一个自己的标识</div><div class="line">    NSString *CellIdentifier = [NSString stringWithFormat:@&quot;cell%ld%ld&quot;,indexPath.section,indexPath.row];</div><div class="line">    // 通过不同标识创建cell实例</div><div class="line">    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];</div><div class="line">    // 判断为空进行初始化  --（当拉动页面显示超过主页面内容的时候就会重用之前的cell，而不会再次初始化）</div><div class="line">    if (!cell) &#123;</div><div class="line">        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];</div><div class="line">    &#125;</div><div class="line">    // 对cell 进行简单地数据配置</div><div class="line">    cell.textLabel.text = @&quot;text&quot;;</div><div class="line">    cell.detailTextLabel.text = @&quot;text&quot;;</div><div class="line">    cell.imageView.image = [UIImage imageNamed:@&quot;4.png&quot;];</div><div class="line">    </div><div class="line">    return cell;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <a id="more"></a>
-<h3>offsetBy</h3>
-
-<p></p><p><code>index(String.Index, offsetBy: String.IndexDistance)</code><br>offsetBy 的值可以为正或是负, 正则表示向后, 负则相反.别被offsetBy 的 String.IndexDistance 类型吓到, 本身其实是一个 Int.(类似于+n 和 -n)</p><p></p>
-<p><pre><code>// character<br>let index = str.index(str.startIndex, offsetBy: 7)<br>str[index]  // p</code></pre></p>
-<p>// range<br>let start = str.index(str.startIndex, offsetBy: 7)<br>let end = str.index(str.endIndex, offsetBy: -6)<br>let range = start ..&lt; end<br>str[range]  // play</p>
-<p></p><h3>limitedBy</h3><p></p>
-<p></p><p><code>index(String.Index, offsetBy: String.IndexDistance, limitedBy: String.Index)</code></p><p></p>
-<p></p><p>limitedBy 在 offset 过大导致溢出错误的时候很有用.这个返回值是一个可选值, 如果 offsetBy 超过了 limitBy, 则返回 nil.</p><p></p>
-<p><pre><code>// character<br>if let index = str.index(str.startIndex, offsetBy: 7, limitedBy: str.endIndex) {<br>str[index]  // p<br>}</code></pre></p>
-<p></p><p>上面这段代码中如果offset 设置为 77, 返回值就是 nil, if 中的代码就会跳过</p><p></p>
-<p></p><p>所以如果你要取子串的正确姿势是什么?</p><p></p>
-<ul><br><li>取某个位置之后的所有字符<br><code>str.substring(from: str.index(str.startIndex, offsetBy: 7)) // playground</code><br></li><br><li>取倒数某个位置之后的所有字符<br><code>str.substring(from: str.index(str.endIndex, offsetBy: -10))  //playground</code><br></li><br><li>取某个位置之前的所有字符<br><code>str.substring(to: str.index(str.startIndex, offsetBy: 5)) //Hello</code><br></li><br><li>取倒数某个位置之前的所有字符<br><code>str.substring(to: str.index(str.endIndex, offsetBy: -12)) //Hello</code><br></li><br><li>取中间的某个字符串<br><code>str.substring(with: str.index(str.startIndex, offsetBy: 7) ..&lt; str.index(str.endIndex, offsetBy: -6)) // play</code><br></li><br></ul>
-
+<h3 id="方案二："><a href="#方案二：" class="headerlink" title="方案二："></a>方案二：</h3><p> 同样取消cell的重用机制，通过indexPath来创建cell 将可以解决重复显示问题 不过这样做相对于大数据来说内存就比较吃紧了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">// 方案二  通过不让他重用cell 来解决重复显示</div><div class="line">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</div><div class="line">&#123;</div><div class="line">    // 定义唯一标识</div><div class="line">    static NSString *CellIdentifier = @&quot;Cell&quot;;</div><div class="line">    // 通过indexPath创建cell实例 每一个cell都是单独的</div><div class="line">    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];</div><div class="line">    // 判断为空进行初始化  --（当拉动页面显示超过主页面内容的时候就会重用之前的cell，而不会再次初始化）</div><div class="line">    if (!cell) &#123;</div><div class="line">        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];</div><div class="line">    &#125;</div><div class="line">    // 对cell 进行简单地数据配置</div><div class="line">    cell.textLabel.text = @&quot;text&quot;;</div><div class="line">    cell.detailTextLabel.text = @&quot;text&quot;;</div><div class="line">    cell.imageView.image = [UIImage imageNamed:@&quot;4.png&quot;];</div><div class="line">    </div><div class="line">    return cell;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>  ###方案三<br>  只要最后一个显示的cell内容不为空，然后把它的子视图全部删除，等同于把这个cell单独出来了 然后跟新数据就可以解决重复显示 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">// 方案三  当页面拉动需要显示新数据的时候，把最后一个cell进行删除 就有可以自定义cell 此方案即可避免重复显示，又重用了cell相对内存管理来说是最好的方案 前两者相对比较消耗内存</div><div class="line">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</div><div class="line">&#123;</div><div class="line">    // 定义唯一标识</div><div class="line">    static NSString *CellIdentifier = @&quot;Cell&quot;;</div><div class="line">    // 通过唯一标识创建cell实例</div><div class="line">    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];</div><div class="line">   </div><div class="line">    // 判断为空进行初始化  --（当拉动页面显示超过主页面内容的时候就会重用之前的cell，而不会再次初始化）</div><div class="line">    if (!cell) &#123;</div><div class="line">        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];</div><div class="line">    &#125;</div><div class="line">    else//当页面拉动的时候 当cell存在并且最后一个存在 把它进行删除就出来一个独特的cell我们在进行数据配置即可避免</div><div class="line">    &#123;</div><div class="line">        while ([cell.contentView.subviews lastObject] != nil) &#123;</div><div class="line">            [(UIView *)[cell.contentView.subviews lastObject] removeFromSuperview];</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    // 对cell 进行简单地数据配置</div><div class="line">    cell.textLabel.text = @&quot;text&quot;;</div><div class="line">    cell.detailTextLabel.text = @&quot;text&quot;;</div><div class="line">    cell.imageView.image = [UIImage imageNamed:@&quot;4.png&quot;];</div><div class="line">    </div><div class="line">    return cell;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>经过测试UIcollectionViewCell布局错乱用第一种方法同样可以解决问题，实际解决情况还要自己测试才可以。</strong></p>
+<p>最后贴一个我的UIcollectionViewCell解决复用的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath</div><div class="line">&#123;</div><div class="line">    </div><div class="line">       NSString *CellIdentifier = [NSString stringWithFormat:@&quot;cell%ld%ld&quot;,indexPath.section,indexPath.row];</div><div class="line">    </div><div class="line">    [self.collectionView registerNib:[UINib nibWithNibName:@&quot;AudienceViewCollectionViewCell&quot; bundle:nil] forCellWithReuseIdentifier:CellIdentifier];</div><div class="line"></div><div class="line">    // 通过不同标识创建cell实例</div><div class="line">    AudienceViewCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];</div><div class="line">    </div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -536,9 +486,7 @@ str[range]  // Hello, playgroun</code></pre>
       
         <div class="post-tags">
           
-            <a href="/tags/Swift/" rel="tag"># Swift</a>
-          
-            <a href="/tags/字符串操作/" rel="tag"># 字符串操作</a>
+            <a href="/tags/UITableViewCell复用/" rel="tag"># UITableViewCell复用</a>
           
         </div>
       
@@ -551,8 +499,8 @@ str[range]  // Hello, playgroun</code></pre>
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017-03-15-Hexo配合github搭建免费博客，绑定域名.html" rel="next" title="Hexo配合github搭建免费博客，绑定域名">
-                <i class="fa fa-chevron-left"></i> Hexo配合github搭建免费博客，绑定域名
+              <a href="/2017-03-29-Swift函数与闭包的应用实例.html" rel="next" title="Swift函数与闭包的应用实例">
+                <i class="fa fa-chevron-left"></i> Swift函数与闭包的应用实例
               </a>
             
           </div>
@@ -560,10 +508,6 @@ str[range]  // Hello, playgroun</code></pre>
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017-03-29-Swift函数与闭包的应用实例.html" rel="prev" title="Swift函数与闭包的应用实例">
-                Swift函数与闭包的应用实例 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -578,10 +522,10 @@ str[range]  // Hello, playgroun</code></pre>
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2017-03-28-Swift字符串常用操作.html"
-     data-title="Swift字符串常用操作"
+        <div class="ds-share flat" data-thread-key="2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html"
+     data-title="解决TableViewCell和CollectionViewCell复用布局错乱问题"
      data-content=""
-     data-url="wangsen.website/2017-03-28-Swift字符串常用操作.html">
+     data-url="wangsen.website/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -608,8 +552,8 @@ str[range]  // Hello, playgroun</code></pre>
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017-03-28-Swift字符串常用操作.html"
-           data-title="Swift字符串常用操作" data-url="wangsen.website/2017-03-28-Swift字符串常用操作.html">
+      <div class="ds-thread" data-thread-key="2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html"
+           data-title="解决TableViewCell和CollectionViewCell复用布局错乱问题" data-url="wangsen.website/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html">
       </div>
     
   </div>
@@ -735,7 +679,7 @@ str[range]  // Hello, playgroun</code></pre>
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">startIndex 和 endIndex</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">after</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">3.</span> <span class="nav-text">before</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">4.</span> <span class="nav-text">offsetBy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">5.</span> <span class="nav-text">limitedBy</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#方案一："><span class="nav-number">1.</span> <span class="nav-text">方案一：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方案二："><span class="nav-number">2.</span> <span class="nav-text">方案二：</span></a></li></ol></div>
             
 
           </div>
