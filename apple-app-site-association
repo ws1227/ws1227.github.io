@@ -3,12 +3,12 @@
         "apps": [],
         "details": [
             {
-                "appID": "L2LYHXGC7E.com.yiju.joustar",
-                "paths": [ "*" ,"/","/archives/","/archives/*"]
+                "appID": "9JA89QQLNQ.com.apple.wwdc",
+                "paths": [ "/wwdc/news/", "/videos/wwdc/2015/*"]
             },
             {
-                "appID": "ABCD1234.com.apple.wwdc",
-                "paths": [ "*" ]
+                "appID": "L2LYHXGC7E.com.wangsen.demo",
+                "paths": [ "*" ,"/","/archives/","/archives/*"]
             }
         ]
     }
