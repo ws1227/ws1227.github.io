@@ -324,6 +324,142 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="wangsen.website/2017-05-17-iOS线程安全篇.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017-05-17-iOS线程安全篇.html" itemprop="url">
+                  iOS线程安全篇
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-17T15:52:14+08:00">
+                2017-05-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017-05-17-iOS线程安全篇.html" class="leancloud_visitors" data-flag-title="iOS线程安全篇">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><strong>一、前言</strong></span></p><p>前段时间看了几个开源项目，发现他们保持线程同步的方式各不相同，有@synchronized、NSLock、dispatch_semaphore、NSCondition、pthread_mutex、OSSpinLock。后来网上查了一下，发现他们的实现机制各不相同，性能也各不一样。不好意思，我们平常使用最多的@synchronized是性能最差的。下面我们先分别介绍每个加锁方式的使用，在使用一个案例来对他们进行性能对比。</p><p><span style="color: rgb(0, 176, 80);"><strong>二、介绍与使用</strong></span></p><p><strong>2.1、@synchronized</strong></p><pre class="brush:js;toolbar:false">NSObject&nbsp;<em>obj&nbsp;=&nbsp;[[NSObject&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;@synchronized(obj)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(3);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;@synchronized(obj)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</pre><p>@synchronized(obj)指令使用的obj为该锁的唯一标识，只有当标识相同时，才为满足互斥，如果线程2中的@synchronized(obj)改为@synchronized(self),刚线程2就不会被阻塞，@synchronized指令实现锁的优点就是我们不需要在代码中显式的创建锁对象，便可以实现锁的机制，但作为一种预防措施，@synchronized块会隐式的添加一个异常处理例程来保护代码，该处理例程会在异常抛出的时候自动的释放互斥锁。所以如果不想让隐式的异常处理例程带来额外的开销，你可以考虑使用锁对象。</p><p>上面结果的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:48:35.747&nbsp;SafeMultiThread[35945:580107]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:48:38.748&nbsp;SafeMultiThread[35945:580107]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:48:38.749&nbsp;SafeMultiThread[35945:580118]&nbsp;需要线程同步的操作2</pre><p><strong>2.2、dispatch_semaphore</strong></p><pre class="brush:js;toolbar:false">dispatch_semaphore_t&nbsp;signal&nbsp;=&nbsp;dispatch_semaphore_create(1);<br>dispatch_time_t&nbsp;overTime&nbsp;=&nbsp;dispatch_time(DISPATCH_TIME_NOW,&nbsp;3&nbsp;</em>&nbsp;NSEC_PER_SEC);<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_wait(signal,&nbsp;overTime);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_signal(signal);<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_wait(signal,&nbsp;overTime);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_signal(signal);<br>});</pre><p>dispatch_semaphore是GCD用来同步的一种方式，与他相关的共有三个函数，分别是dispatch_semaphore_create，dispatch_semaphore_signal，dispatch_semaphore_wait。</p><p>（1）dispatch_semaphore_create的声明为：</p><pre class="brush:js;toolbar:false">dispatch_semaphore_t&nbsp;dispatch_semaphore_create(long&nbsp;value);</pre><p>传入的参数为long，输出一个dispatch_semaphore_t类型且值为value的信号量。</p><p>值得注意的是，这里的传入的参数value必须大于或等于0，否则dispatch_semaphore_create会返回NULL。</p><p>（2）dispatch_semaphore_signal的声明为：</p><pre class="brush:js;toolbar:false">long&nbsp;dispatch_semaphore_signal(dispatch_semaphore_t&nbsp;dsema);</pre><p>这个函数会使传入的信号量dsema的值加1；</p><p>(3) dispatch_semaphore_wait的声明为：</p><pre class="brush:js;toolbar:false">long&nbsp;dispatch_semaphore_wait(dispatch_semaphore_t&nbsp;dsema,&nbsp;dispatch_time_t&nbsp;timeout);</pre><p>这个函数会使传入的信号量dsema的值减1；这个函数的作用是这样的，如果dsema信号量的值大于0，该函数所处线程就继续执行下面的语句，并且将信号量的值减1；如果desema的值为0，那么这个函数就阻塞当前线程等待timeout（注意timeout的类型为dispatch_time_t，不能直接传入整形或float型数），如果等待的期间desema的值被dispatch_semaphore_signal函数加1了，且该函数（即dispatch_semaphore_wait）所处线程获得了信号量，那么就继续向下执行并将信号量减1。如果等待期间没有获取到信号量或者信号量的值一直为0，那么等到timeout时，其所处线程自动执行其后语句。</p><p>dispatch_semaphore 是信号量，但当信号总量设为 1 时也可以当作锁来。在没有等待情况出现时，它的性能比 pthread_mutex 还要高，但一旦有等待情况出现时，性能就会下降许多。相对于 OSSpinLock 来说，它的优势在于等待时不会消耗 CPU 资源。</p><p>如上的代码，如果超时时间overTime设置成&gt;2，可完成同步操作。如果overTime<2的话，在线程1还没有执行完成的情况下，此时超时了，将自动执行下面的代码。</p><p>上面代码的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:47:52.324&nbsp;SafeMultiThread[35945:579032]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:47:55.325&nbsp;SafeMultiThread[35945:579032]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:47:55.326&nbsp;SafeMultiThread[35945:579033]&nbsp;需要线程同步的操作2</pre><p>如果把超时时间设置为<2s的时候，执行的结果就是：</p><pre class="brush:js;toolbar:false">2016-06-30&nbsp;18:53:24.049&nbsp;SafeMultiThread[30834:434334]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-30&nbsp;18:53:25.554&nbsp;SafeMultiThread[30834:434332]&nbsp;需要线程同步的操作2<br>2016-06-30&nbsp;18:53:26.054&nbsp;SafeMultiThread[30834:434334]&nbsp;需要线程同步的操作1&nbsp;结束</pre><p><strong>2.3、NSLock</strong></p><pre class="brush:js;toolbar:false">NSLock&nbsp;<em>lock&nbsp;=&nbsp;[[NSLock&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;//[lock&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lockBeforeDate:[NSDate&nbsp;date]];<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([lock&nbsp;tryLock])&nbsp;{//尝试获取锁，如果获取不到返回NO，不会阻塞该线程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”锁可用的操作”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”锁不可用的操作”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;NSDate&nbsp;</em>date&nbsp;=&nbsp;[[NSDate&nbsp;alloc]&nbsp;initWithTimeIntervalSinceNow:3];<br>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([lock&nbsp;lockBeforeDate:date])&nbsp;{//尝试在未来的3s内获取锁，并阻塞该线程，如果3s内获取不到恢复线程,&nbsp;返回NO,不会阻塞该线程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”没有超时，获得锁”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”超时，没有获得锁”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</pre><p>NSLock是Cocoa提供给我们最基本的锁对象，这也是我们经常所使用的，除lock和unlock方法外，NSLock还提供了tryLock和lockBeforeDate:两个方法，前一个方法会尝试加锁，如果锁不可用(已经被锁住)，刚并不会阻塞线程，并返回NO。lockBeforeDate:方法会在所指定Date之前尝试加锁，如果在指定时间之前都不能加锁，则返回NO。</p><p>上面代码的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:45:08.864&nbsp;SafeMultiThread[35911:575795]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:45:09.869&nbsp;SafeMultiThread[35911:575781]&nbsp;锁不可用的操作<br>2016-06-29&nbsp;20:45:10.869&nbsp;SafeMultiThread[35911:575795]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:45:10.870&nbsp;SafeMultiThread[35911:575781]&nbsp;没有超时，获得锁</pre><p>源码定义如下：</p><pre class="brush:js;toolbar:false">@protocol&nbsp;NSLocking<br>-&nbsp;(void)lock;<br>-&nbsp;(void)unlock;<br>@end<br>@interface&nbsp;NSLock&nbsp;:&nbsp;NSObject&nbsp;&nbsp;{<br>@private<br>&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;<em>_priv;<br>}<br>-&nbsp;(BOOL)tryLock;<br>-&nbsp;(BOOL)lockBeforeDate:(NSDate&nbsp;</em>)limit;<br>@property&nbsp;(nullable,&nbsp;copy)&nbsp;NSString&nbsp;<em>name&nbsp;NS_AVAILABLE(10_5,&nbsp;2_0);<br>@end</pre><p><strong>2.4、NSRecursiveLock递归锁</strong></p><pre class="brush:js;toolbar:false">//NSLock&nbsp;</em>lock&nbsp;=&nbsp;[[NSLock&nbsp;alloc]&nbsp;init];<br>NSRecursiveLock&nbsp;*lock&nbsp;=&nbsp;[[NSRecursiveLock&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;void&nbsp;(^RecursiveMethod)(int);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod&nbsp;=&nbsp;^(int&nbsp;value)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(value&nbsp;&gt;&nbsp;0)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”value&nbsp;=&nbsp;%d”,&nbsp;value);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(value&nbsp;-&nbsp;1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(5);<br>});</pre><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017-05-17-iOS线程安全篇.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="wangsen.website/2017-05-15-Objective-C-Runtime-1小时入门教程.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1703,142 +1839,6 @@ str[range]  // Hello, playgroun</code></pre>
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="wangsen.website/2017-03-16-myResume.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="王森">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王森博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017-03-16-myResume.html" itemprop="url">
-                  myResume
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-16T18:45:59+08:00">
-                2017-03-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017-03-16-myResume.html" class="leancloud_visitors" data-flag-title="myResume">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <html><head><title>简历预览</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="robots" content="nofollow" /><link rel="stylesheet" type="text/css" href="https://img00.zhaopin.cn/2012/css/reset.min.css" media="all" /><link rel="stylesheet" type="text/css" href="https://i.zhaopin.com/Content/css/resume_preview.css" media="all" /></head><body><div class="resumeBody"><div class="summary"><h1>王森</h1>男<span class="ver-line">|</span>未婚<span class="ver-line">|</span>1992年2月生<span class="ver-line">|</span><br>            户口：河南-南阳<span class="ver-line">|</span><br>              现居住于:北京-朝阳区<br />2.5年工作经验<br>            <span class="ver-line">|</span>团员<p>Tel:15617877692</p><p><br>              E-mail：<a href="mailto:sslxws@163.com">sslxws@163.com</a></p><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017-03-16-myResume.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1888,7 +1888,7 @@ str[range]  // Hello, playgroun</code></pre>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1910,7 +1910,7 @@ str[range]  // Hello, playgroun</code></pre>
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

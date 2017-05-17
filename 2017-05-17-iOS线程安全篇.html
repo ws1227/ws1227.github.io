@@ -1,0 +1,1049 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="F_pmJOje5pcXixoVap4Vk7vlUPHG5UbaU4Hzn_uhgck" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS线程安全篇," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="一、前言前段时间看了几个开源项目，发现他们保持线程同步的方式各不相同，有@synchronized、NSLock、dispatch_semaphore、NSCondition、pthread_mutex、OSSpinLock。后来网上查了一下，发现他们的实现机制各不相同，性能也各不一样。不好意思，我们平常使用最多的@synchronized是性能最差的。下面我们先分别介绍每个加锁方式的使用，在使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS线程安全篇">
+<meta property="og:url" content="wangsen.website/2017-05-17-iOS线程安全篇.html">
+<meta property="og:site_name" content="王森博客">
+<meta property="og:description" content="一、前言前段时间看了几个开源项目，发现他们保持线程同步的方式各不相同，有@synchronized、NSLock、dispatch_semaphore、NSCondition、pthread_mutex、OSSpinLock。后来网上查了一下，发现他们的实现机制各不相同，性能也各不一样。不好意思，我们平常使用最多的@synchronized是性能最差的。下面我们先分别介绍每个加锁方式的使用，在使用">
+<meta property="og:updated_time" content="2017-05-17T07:54:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS线程安全篇">
+<meta name="twitter:description" content="一、前言前段时间看了几个开源项目，发现他们保持线程同步的方式各不相同，有@synchronized、NSLock、dispatch_semaphore、NSCondition、pthread_mutex、OSSpinLock。后来网上查了一下，发现他们的实现机制各不相同，性能也各不一样。不好意思，我们平常使用最多的@synchronized是性能最差的。下面我们先分别介绍每个加锁方式的使用，在使用">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="wangsen.website/2017-05-17-iOS线程安全篇.html"/>
+
+
+
+
+
+  <title> iOS线程安全篇 | 王森博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-93848721-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b0e8472d72769ebfb2c0890101ae3f10";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=61230218";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">王森博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">技术随笔</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="wangsen.website/2017-05-17-iOS线程安全篇.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                iOS线程安全篇
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-17T15:52:14+08:00">
+                2017-05-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017-05-17-iOS线程安全篇.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017-05-17-iOS线程安全篇.html" class="leancloud_visitors" data-flag-title="iOS线程安全篇">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>一、前言</strong></p><p>前段时间看了几个开源项目，发现他们保持线程同步的方式各不相同，有@synchronized、NSLock、dispatch_semaphore、NSCondition、pthread_mutex、OSSpinLock。后来网上查了一下，发现他们的实现机制各不相同，性能也各不一样。不好意思，我们平常使用最多的@synchronized是性能最差的。下面我们先分别介绍每个加锁方式的使用，在使用一个案例来对他们进行性能对比。</p><p><span style="color: rgb(0, 176, 80);"><strong>二、介绍与使用</strong></span></p><p><strong>2.1、@synchronized</strong></p><pre class="brush:js;toolbar:false">NSObject&nbsp;<em>obj&nbsp;=&nbsp;[[NSObject&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;@synchronized(obj)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(3);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;@synchronized(obj)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</em></pre><p>@synchronized(obj)指令使用的obj为该锁的唯一标识，只有当标识相同时，才为满足互斥，如果线程2中的@synchronized(obj)改为@synchronized(self),刚线程2就不会被阻塞，@synchronized指令实现锁的优点就是我们不需要在代码中显式的创建锁对象，便可以实现锁的机制，但作为一种预防措施，@synchronized块会隐式的添加一个异常处理例程来保护代码，该处理例程会在异常抛出的时候自动的释放互斥锁。所以如果不想让隐式的异常处理例程带来额外的开销，你可以考虑使用锁对象。</p><p>上面结果的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:48:35.747&nbsp;SafeMultiThread[35945:580107]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:48:38.748&nbsp;SafeMultiThread[35945:580107]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:48:38.749&nbsp;SafeMultiThread[35945:580118]&nbsp;需要线程同步的操作2</pre><p><strong>2.2、dispatch_semaphore</strong></p><pre class="brush:js;toolbar:false">dispatch_semaphore_t&nbsp;signal&nbsp;=&nbsp;dispatch_semaphore_create(1);<br>dispatch_time_t&nbsp;overTime&nbsp;=&nbsp;dispatch_time(DISPATCH_TIME_NOW,&nbsp;3&nbsp;&nbsp;NSEC_PER_SEC);<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_wait(signal,&nbsp;overTime);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_signal(signal);<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_wait(signal,&nbsp;overTime);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_signal(signal);<br>});</pre><p>dispatch_semaphore是GCD用来同步的一种方式，与他相关的共有三个函数，分别是dispatch_semaphore_create，dispatch_semaphore_signal，dispatch_semaphore_wait。</p><p>（1）dispatch_semaphore_create的声明为：</p><pre class="brush:js;toolbar:false">dispatch_semaphore_t&nbsp;dispatch_semaphore_create(long&nbsp;value);</pre><p>传入的参数为long，输出一个dispatch_semaphore_t类型且值为value的信号量。</p><p>值得注意的是，这里的传入的参数value必须大于或等于0，否则dispatch_semaphore_create会返回NULL。</p><p>（2）dispatch_semaphore_signal的声明为：</p><pre class="brush:js;toolbar:false">long&nbsp;dispatch_semaphore_signal(dispatch_semaphore_t&nbsp;dsema);</pre><p>这个函数会使传入的信号量dsema的值加1；</p><p>(3) dispatch_semaphore_wait的声明为：</p><pre class="brush:js;toolbar:false">long&nbsp;dispatch_semaphore_wait(dispatch_semaphore_t&nbsp;dsema,&nbsp;dispatch_time_t&nbsp;timeout);</pre><p>这个函数会使传入的信号量dsema的值减1；这个函数的作用是这样的，如果dsema信号量的值大于0，该函数所处线程就继续执行下面的语句，并且将信号量的值减1；如果desema的值为0，那么这个函数就阻塞当前线程等待timeout（注意timeout的类型为dispatch_time_t，不能直接传入整形或float型数），如果等待的期间desema的值被dispatch_semaphore_signal函数加1了，且该函数（即dispatch_semaphore_wait）所处线程获得了信号量，那么就继续向下执行并将信号量减1。如果等待期间没有获取到信号量或者信号量的值一直为0，那么等到timeout时，其所处线程自动执行其后语句。</p><p>dispatch_semaphore 是信号量，但当信号总量设为 1 时也可以当作锁来。在没有等待情况出现时，它的性能比 pthread_mutex 还要高，但一旦有等待情况出现时，性能就会下降许多。相对于 OSSpinLock 来说，它的优势在于等待时不会消耗 CPU 资源。</p><p>如上的代码，如果超时时间overTime设置成&gt;2，可完成同步操作。如果overTime<2的话，在线程1还没有执行完成的情况下，此时超时了，将自动执行下面的代码。< p=""><p>上面代码的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:47:52.324&nbsp;SafeMultiThread[35945:579032]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:47:55.325&nbsp;SafeMultiThread[35945:579032]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:47:55.326&nbsp;SafeMultiThread[35945:579033]&nbsp;需要线程同步的操作2</pre><p>如果把超时时间设置为<2s的时候，执行的结果就是：< p=""><pre class="brush:js;toolbar:false">2016-06-30&nbsp;18:53:24.049&nbsp;SafeMultiThread[30834:434334]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-30&nbsp;18:53:25.554&nbsp;SafeMultiThread[30834:434332]&nbsp;需要线程同步的操作2<br>2016-06-30&nbsp;18:53:26.054&nbsp;SafeMultiThread[30834:434334]&nbsp;需要线程同步的操作1&nbsp;结束</pre><p><strong>2.3、NSLock</strong></p><pre class="brush:js;toolbar:false">NSLock&nbsp;<em>lock&nbsp;=&nbsp;[[NSLock&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;//[lock&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lockBeforeDate:[NSDate&nbsp;date]];<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([lock&nbsp;tryLock])&nbsp;{//尝试获取锁，如果获取不到返回NO，不会阻塞该线程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”锁可用的操作”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”锁不可用的操作”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;NSDate&nbsp;</em>date&nbsp;=&nbsp;[[NSDate&nbsp;alloc]&nbsp;initWithTimeIntervalSinceNow:3];<br>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([lock&nbsp;lockBeforeDate:date])&nbsp;{//尝试在未来的3s内获取锁，并阻塞该线程，如果3s内获取不到恢复线程,&nbsp;返回NO,不会阻塞该线程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”没有超时，获得锁”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”超时，没有获得锁”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</pre><p>NSLock是Cocoa提供给我们最基本的锁对象，这也是我们经常所使用的，除lock和unlock方法外，NSLock还提供了tryLock和lockBeforeDate:两个方法，前一个方法会尝试加锁，如果锁不可用(已经被锁住)，刚并不会阻塞线程，并返回NO。lockBeforeDate:方法会在所指定Date之前尝试加锁，如果在指定时间之前都不能加锁，则返回NO。</p><p>上面代码的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:45:08.864&nbsp;SafeMultiThread[35911:575795]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:45:09.869&nbsp;SafeMultiThread[35911:575781]&nbsp;锁不可用的操作<br>2016-06-29&nbsp;20:45:10.869&nbsp;SafeMultiThread[35911:575795]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:45:10.870&nbsp;SafeMultiThread[35911:575781]&nbsp;没有超时，获得锁</pre><p>源码定义如下：</p><pre class="brush:js;toolbar:false">@protocol&nbsp;NSLocking<br>-&nbsp;(void)lock;<br>-&nbsp;(void)unlock;<br>@end<br>@interface&nbsp;NSLock&nbsp;:&nbsp;NSObject&nbsp;&nbsp;{<br>@private<br>&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;<em>_priv;<br>}<br>-&nbsp;(BOOL)tryLock;<br>-&nbsp;(BOOL)lockBeforeDate:(NSDate&nbsp;</em>)limit;<br>@property&nbsp;(nullable,&nbsp;copy)&nbsp;NSString&nbsp;<em>name&nbsp;NS_AVAILABLE(10_5,&nbsp;2_0);<br>@end</em></pre><p><strong>2.4、NSRecursiveLock递归锁</strong></p><pre class="brush:js;toolbar:false">//NSLock&nbsp;lock&nbsp;=&nbsp;[[NSLock&nbsp;alloc]&nbsp;init];<br>NSRecursiveLock&nbsp;*lock&nbsp;=&nbsp;[[NSRecursiveLock&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;void&nbsp;(^RecursiveMethod)(int);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod&nbsp;=&nbsp;^(int&nbsp;value)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(value&nbsp;&gt;&nbsp;0)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”value&nbsp;=&nbsp;%d”,&nbsp;value);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(value&nbsp;-&nbsp;1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(5);<br>});</pre><br><a id="more"></a></2s的时候，执行的结果就是：<></p>
+<p>NSRecursiveLock实际上定义的是一个递归锁，这个锁可以被同一线程多次请求，而不会引起死锁。这主要是用在循环或递归操作中。</p><p>这段代码是一个典型的死锁情况。在我们的线程中，RecursiveMethod是递归调用的。所以每次进入这个block时，都会去加一次锁，而从第二次开始，由于锁已经被使用了且没有解锁，所以它需要等待锁被解除，这样就导致了死锁，线程被阻塞住了。调试器中会输出如下信息：</p><pre class="brush:js;toolbar:false">2016-06-30&nbsp;19:08:06.393&nbsp;SafeMultiThread[30928:449008]&nbsp;value&nbsp;=&nbsp;5<br>2016-06-30&nbsp;19:08:07.399&nbsp;SafeMultiThread[30928:449008]&nbsp;-[NSLock&nbsp;lock]:&nbsp;deadlock&nbsp;(&nbsp;&#39;(null)&#39;)<br>2016-06-30&nbsp;19:08:07.399&nbsp;SafeMultiThread[30928:449008]&nbsp;Break&nbsp;on&nbsp;_NSLockError()&nbsp;to&nbsp;debug.</pre><p>在这种情况下，我们就可以使用NSRecursiveLock。它可以允许同一线程多次加锁，而不会造成死锁。递归锁会跟踪它被lock的次数。每次成功的lock都必须平衡调用unlock操作。只有所有达到这种平衡，锁最后才能被释放，以供其它线程使用。</p><p>如果我们将NSLock代替为NSRecursiveLock，上面代码则会正确执行。</p><pre class="brush:js;toolbar:false">2016-06-30&nbsp;19:09:41.414&nbsp;SafeMultiThread[30949:450684]&nbsp;value&nbsp;=&nbsp;5<br>2016-06-30&nbsp;19:09:42.418&nbsp;SafeMultiThread[30949:450684]&nbsp;value&nbsp;=&nbsp;4<br>2016-06-30&nbsp;19:09:43.419&nbsp;SafeMultiThread[30949:450684]&nbsp;value&nbsp;=&nbsp;3<br>2016-06-30&nbsp;19:09:44.424&nbsp;SafeMultiThread[30949:450684]&nbsp;value&nbsp;=&nbsp;2<br>2016-06-30&nbsp;19:09:45.426&nbsp;SafeMultiThread[30949:450684]&nbsp;value&nbsp;=&nbsp;1</pre><p>如果需要其他功能，源码定义如下：</p><pre class="brush:js;toolbar:false">@interface&nbsp;NSRecursiveLock&nbsp;:&nbsp;NSObject&nbsp;&nbsp;{<br>@private<br>&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;<em>_priv;<br>}<br>-&nbsp;(BOOL)tryLock;<br>-&nbsp;(BOOL)lockBeforeDate:(NSDate&nbsp;</em>)limit;<br>@property&nbsp;(nullable,&nbsp;copy)&nbsp;NSString&nbsp;<em>name&nbsp;NS_AVAILABLE(10_5,&nbsp;2_0);<br>@end</em></pre><p><strong>2.5、NSConditionLock条件锁</strong></p><pre class="brush:js;toolbar:false">NSMutableArray&nbsp;products&nbsp;=&nbsp;[NSMutableArray&nbsp;array];<br>NSInteger&nbsp;HAS_DATA&nbsp;=&nbsp;1;<br>NSInteger&nbsp;NO_DATA&nbsp;=&nbsp;0;<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(1)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lockWhenCondition:NO_DATA];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[products&nbsp;addObject:[[NSObject&nbsp;alloc]&nbsp;init]];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”produce&nbsp;a&nbsp;product,总量:%zi”,products.count);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlockWithCondition:HAS_DATA];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(1)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”wait&nbsp;for&nbsp;product”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lockWhenCondition:HAS_DATA];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[products&nbsp;removeObjectAtIndex:0];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”custome&nbsp;a&nbsp;product”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlockWithCondition:NO_DATA];<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</pre><p>当我们在使用多线程的时候，有时一把只会lock和unlock的锁未必就能完全满足我们的使用。因为普通的锁只能关心锁与不锁，而不在乎用什么钥匙才能开锁，而我们在处理资源共享的时候，多数情况是只有满足一定条件的情况下才能打开这把锁：</p><p>在线程1中的加锁使用了lock，所以是不需要条件的，所以顺利的就锁住了，但在unlock的使用了一个整型的条件，它可以开启其它线程中正在等待这把钥匙的临界地，而线程2则需要一把被标识为2的钥匙，所以当线程1循环到最后一次的时候，才最终打开了线程2中的阻塞。但即便如此，NSConditionLock也跟其它的锁一样，是需要lock与unlock对应的，只是lock,lockWhenCondition:与unlock，unlockWithCondition:是可以随意组合的，当然这是与你的需求相关的。</p><p>上面代码执行结果如下：</p><pre class="brush:js;toolbar:false">2016-06-30&nbsp;20:31:58.699&nbsp;SafeMultiThread[31282:521698]&nbsp;wait&nbsp;for&nbsp;product<br>2016-06-30&nbsp;20:31:58.699&nbsp;SafeMultiThread[31282:521708]&nbsp;produce&nbsp;a&nbsp;product,总量:1<br>2016-06-30&nbsp;20:31:58.700&nbsp;SafeMultiThread[31282:521698]&nbsp;custome&nbsp;a&nbsp;product<br>2016-06-30&nbsp;20:31:58.700&nbsp;SafeMultiThread[31282:521698]&nbsp;wait&nbsp;for&nbsp;product<br>2016-06-30&nbsp;20:31:59.705&nbsp;SafeMultiThread[31282:521708]&nbsp;produce&nbsp;a&nbsp;product,总量:1<br>2016-06-30&nbsp;20:31:59.706&nbsp;SafeMultiThread[31282:521698]&nbsp;custome&nbsp;a&nbsp;product<br>2016-06-30&nbsp;20:31:59.706&nbsp;SafeMultiThread[31282:521698]&nbsp;wait&nbsp;for&nbsp;product<br>2016-06-30&nbsp;20:32:00.707&nbsp;SafeMultiThread[31282:521708]&nbsp;produce&nbsp;a&nbsp;product,总量:1<br>2016-06-30&nbsp;20:32:00.708&nbsp;SafeMultiThread[31282:521698]&nbsp;custome&nbsp;a&nbsp;product</pre><p>如果你需要其他功能，源码定义如下：</p><pre class="brush:js;toolbar:false">@interface&nbsp;NSConditionLock&nbsp;:&nbsp;NSObject&nbsp;&nbsp;{<br>@private<br>&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;<em>_priv;<br>}<br>-&nbsp;(instancetype)initWithCondition:(NSInteger)condition&nbsp;NS_DESIGNATED_INITIALIZER;<br>@property&nbsp;(readonly)&nbsp;NSInteger&nbsp;condition;<br>-&nbsp;(void)lockWhenCondition:(NSInteger)condition;<br>-&nbsp;(BOOL)tryLock;<br>-&nbsp;(BOOL)tryLockWhenCondition:(NSInteger)condition;<br>-&nbsp;(void)unlockWithCondition:(NSInteger)condition;<br>-&nbsp;(BOOL)lockBeforeDate:(NSDate&nbsp;</em>)limit;<br>-&nbsp;(BOOL)lockWhenCondition:(NSInteger)condition&nbsp;beforeDate:(NSDate&nbsp;<em>)limit;<br>@property&nbsp;(nullable,&nbsp;copy)&nbsp;NSString&nbsp;</em>name&nbsp;NS_AVAILABLE(10_5,&nbsp;2_0);<br>@end</pre><p><strong>2.6、NSCondition</strong></p><pre class="brush:js;toolbar:false">NSCondition&nbsp;<em>condition&nbsp;=&nbsp;[[NSCondition&nbsp;alloc]&nbsp;init];<br>NSMutableArray&nbsp;</em>products&nbsp;=&nbsp;[NSMutableArray&nbsp;array];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(1)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[condition&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([products&nbsp;count]&nbsp;==&nbsp;0)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”wait&nbsp;for&nbsp;product”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[condition&nbsp;wait];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[products&nbsp;removeObjectAtIndex:0];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”custome&nbsp;a&nbsp;product”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[condition&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(1)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[condition&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[products&nbsp;addObject:[[NSObject&nbsp;alloc]&nbsp;init]];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”produce&nbsp;a&nbsp;product,总量:%zi”,products.count);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[condition&nbsp;signal];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nnbsp;&nbsp;&nbsp;&nbsp;&nbsp;[condition&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</pre><p>一种最基本的条件锁。手动控制线程wait和signal。</p><p>[condition lock];一般用于多线程同时访问、修改同一个数据源，保证在同一时间内数据源只被访问、修改一次，其他线程的命令需要在lock 外等待，只到unlock ，才可访问</p><p>[condition unlock];与lock 同时使用</p><p>[condition wait];让当前线程处于等待状态</p><p>[condition signal];CPU发信号告诉线程不用在等待，可以继续执行</p><p>上面代码执行结果如下：</p><pre class="brush:js;toolbar:false">2016-06-30&nbsp;20:21:25.295&nbsp;SafeMultiThread[31256:513991]&nbsp;wait&nbsp;for&nbsp;product<br>2016-06-30&nbsp;20:21:25.296&nbsp;SafeMultiThread[31256:513994]&nbsp;produce&nbsp;a&nbsp;product,总量:1<br>2016-06-30&nbsp;20:21:25.296&nbsp;SafeMultiThread[31256:513991]&nbsp;custome&nbsp;a&nbsp;product<br>2016-06-30&nbsp;20:21:25.297&nbsp;SafeMultiThread[31256:513991]&nbsp;wait&nbsp;for&nbsp;product<br>2016-06-30&nbsp;20:21:26.302&nbsp;SafeMultiThread[31256:513994]&nbsp;produce&nbsp;a&nbsp;product,总量:1<br>2016-06-30&nbsp;20:21:26.302&nbsp;SafeMultiThread[31256:513991]&nbsp;custome&nbsp;a&nbsp;product<br>2016-06-30&nbsp;20:21:26.302&nbsp;SafeMultiThread[31256:513991]&nbsp;wait&nbsp;for&nbsp;product<br>2016-06-30&nbsp;20:21:27.307&nbsp;SafeMultiThread[31256:513994]&nbsp;produce&nbsp;a&nbsp;product,总量:1<br>2016-06-30&nbsp;20:21:27.308&nbsp;SafeMultiThread[31256:513991]&nbsp;custome&nbsp;a&nbsp;product</pre><p><strong>2.7、pthread_mutex</strong></p><pre class="brush:js;toolbar:false"><strong>block&nbsp;pthread_mutex_t&nbsp;theLock;<br>pthread_mutex_init(&amp;theLock,&nbsp;NULL);<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_mutex_lock(&amp;theLock);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(3);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_mutex_unlock(&amp;theLock);<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_mutex_lock(&amp;theLock);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_mutex_unlock(&amp;theLock);<br>});</strong></pre><p>c语言定义下多线程加锁方式。</p><p>1：pthread_mutex_init(pthread_mutex_t mutex,const pthread_mutexattr_t attr);</p><p>初始化锁变量mutex。attr为锁属性，NULL值为默认属性。</p><p>2：pthread_mutex_lock(pthread_mutex_t mutex);加锁</p><p>3：pthread_mutex_tylock(<em>pthread_mutex_t </em>mutex);加锁，但是与2不一样的是当锁已经在使用的时候，返回为EBUSY，而不是挂起等待。</p><p>4：pthread_mutex_unlock(pthread_mutex_t <em>mutex);释放锁</em></p><p>5：pthread_mutex_destroy(pthread_mutex_t mutex);使用完后释放</p><p>代码执行操作结果如下：</p><pre class="brush:js;toolbar:false">2016-06-30&nbsp;21:13:32.440&nbsp;SafeMultiThread[31429:548869]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-30&nbsp;21:13:35.445&nbsp;SafeMultiThread[31429:548869]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-30&nbsp;21:13:35.446&nbsp;SafeMultiThread[31429:548866]&nbsp;需要线程同步的操作2</pre><p><strong>2.8、pthread_mutex(recursive)</strong></p><pre class="brush:js;toolbar:false">&nbsp;block&nbsp;pthread_mutex_t&nbsp;theLock;<br>//pthread_mutex_init(&amp;theLock,&nbsp;NULL);<br>pthread_mutexattr_t&nbsp;attr;<br>pthread_mutexattr_init(&amp;attr);<br>pthread_mutexattr_settype(&amp;attr,&nbsp;PTHREAD_MUTEX_RECURSIVE);<br>pthread_mutex_init(&amp;lock,&nbsp;&amp;attr);<br>pthread_mutexattr_destroy(&amp;attr);<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;void&nbsp;(^RecursiveMethod)(int);<br>&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod&nbsp;=&nbsp;^(int&nbsp;value)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_mutex_lock(&amp;theLock);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(value&nbsp;&gt;&nbsp;0)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”value&nbsp;=&nbsp;%d”,&nbsp;value);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(value&nbsp;-&nbsp;1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pthread_mutex_unlock(&amp;theLock);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(5);<br>});</pre><p>这是pthread_mutex为了防止在递归的情况下出现死锁而出现的递归锁。作用和NSRecursiveLock递归锁类似。</p><p>如果使用pthread_mutex_init(&amp;theLock, NULL);初始化锁的话，上面的代码会出现死锁现象。如果使用递归锁的形式，则没有问题。</p><p><strong>2.9、OSSpinLock</strong></p><pre class="brush:js;toolbar:false">__block&nbsp;OSSpinLock&nbsp;theLock&nbsp;=&nbsp;OS_SPINLOCK_INIT;<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;OSSpinLockLock(&amp;theLock);<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(3);<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;OSSpinLockUnlock(&amp;theLock);<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;OSSpinLockLock(&amp;theLock);<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;OSSpinLockUnlock(&amp;theLock);<br>});</pre><p>OSSpinLock 自旋锁，性能最高的锁。原理很简单，就是一直 do while 忙等。它的缺点是当等待时会消耗大量 CPU 资源，所以它不适用于较长时间的任务。 不过最近YY大神在自己的博客<a href="http://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/" target="_blank">不再安全的 OSSpinLock</a>中说明了OSSpinLock已经不再安全，请大家谨慎使用。</p><p><span style="color: rgb(0, 176, 80);"><strong>三、性能对比</strong></span></p><p>对以上各个锁进行1000000此的加锁解锁的空操作时间如下：</p><pre class="brush:js;toolbar:false">OSSpinLock:&nbsp;46.15&nbsp;ms<br>dispatch_semaphore:&nbsp;56.50&nbsp;ms<br>pthread_mutex:&nbsp;178.28&nbsp;ms<br>NSCondition:&nbsp;193.38&nbsp;ms<br>NSLock:&nbsp;175.02&nbsp;ms<br>pthread_mutex(recursive):&nbsp;172.56&nbsp;ms<br>NSRecursiveLock:&nbsp;157.44&nbsp;ms<br>NSConditionLock:&nbsp;490.04&nbsp;ms<br>@synchronized:&nbsp;371.17&nbsp;ms</pre><p><strong>总的来说：</strong></p><p>OSSpinLock和dispatch_semaphore的效率远远高于其他。</p><p>@synchronized和NSConditionLock效率较差。</p><p>鉴于OSSpinLock的不安全，所以我们在开发中如果考虑性能的话，建议使用dispatch_semaphore。</p><p>如果不考虑性能，只是图个方便的话，那就使用@synchronized。</p>
+
+<p>设计代码可在我的<a href="https://github.com/ws1227/MySampleCoe" target="_blank" rel="external">git</a>下载</p>
+</2的话，在线程1还没有执行完成的情况下，此时超时了，将自动执行下面的代码。<></p>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS线程安全篇/" rel="tag"># iOS线程安全篇</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017-05-15-Objective-C-Runtime-1小时入门教程.html" rel="next" title="Objective-C Runtime 1小时入门教程">
+                <i class="fa fa-chevron-left"></i> Objective-C Runtime 1小时入门教程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="王森" />
+          <p class="site-author-name" itemprop="name">王森</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ws1227" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/qq1176183741/home?wvr=5" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王森</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "622740468d034020b2e33dab287e9505",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("6CYvU02F3S8nOsPFJrrHiKGR-gzGzoHsz", "LWEI7xU093wgomlWkvtxF42I");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>
