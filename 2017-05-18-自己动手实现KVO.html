@@ -73,7 +73,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="王森技术博客" />
+  <meta name="keywords" content="iOS," />
 
 
 
@@ -97,7 +97,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
 
 有意思的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="王森博客">
+<meta property="og:title" content="自己动手实现KVO">
 <meta property="og:url" content="wangsen.website/2017-05-18-自己动手实现KVO.html">
 <meta property="og:site_name" content="王森博客">
 <meta property="og:description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。
@@ -107,9 +107,9 @@ KVO (Key-Value Observing)
 KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知。
 
 有意思的">
-<meta property="og:updated_time" content="2017-05-18T10:08:00.000Z">
+<meta property="og:updated_time" content="2017-05-18T10:11:08.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="王森博客">
+<meta name="twitter:title" content="自己动手实现KVO">
 <meta name="twitter:description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。
 
 KVO (Key-Value Observing)
@@ -150,7 +150,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
 
 
 
-  <title>  | 王森博客 </title>
+  <title> 自己动手实现KVO | 王森博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -362,7 +362,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
             
             
               
-                
+                自己动手实现KVO
               
             
           </h2>
@@ -377,7 +377,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-18T18:04:19+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-18T12:09:57+08:00">
                 2017-05-18
               </time>
             
@@ -387,6 +387,28 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OC/" itemprop="url" rel="index">
+                    <span itemprop="name">OC</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -405,7 +427,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
 
           
           
-             <span id="/2017-05-18-自己动手实现KVO.html" class="leancloud_visitors" data-flag-title="">
+             <span id="/2017-05-18-自己动手实现KVO.html" class="leancloud_visitors" data-flag-title="自己动手实现KVO">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -637,6 +659,12 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
 
       
         
@@ -773,7 +801,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
