@@ -107,7 +107,7 @@ KVO (Key-Value Observing)
 KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知。
 
 有意思的">
-<meta property="og:updated_time" content="2017-05-18T10:11:08.000Z">
+<meta property="og:updated_time" content="2017-05-18T10:12:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自己动手实现KVO">
 <meta name="twitter:description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。
@@ -507,7 +507,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
 
 <p>接下来，实现 <code>PG_addObserver:forKey:withBlock:</code> 方法。逻辑并不复杂：</p>
 
-<ol><br><li>检查对象的类有没有相应的 setter 方法。如果没有抛出异常；  </li><br><li>检查对象 <code>isa</code> 指向的类是不是一个 KVO 类。如果不是，新建一个继承原来类的子类，并把 <code>isa</code> 指向这个新建的子类；  </li><br><li>检查对象的 KVO 类重写过没有这个 setter 方法。如果没有，添加重写的 setter 方法；  </li><br><li>添加这个观察者</li><br></ol>
+<ol><br><li>检查对象的类有没有相应的 setter 方法。如果没有抛出异常；  </li><br><li>检查对象 <code>isa</code> 指向的类是不是一个 KVO 类。如果不是，新建一个继承原来类的子类，并把 <code>isa</code> 指向这个新建的子类；  </li><br><li>检查对象的 KVO 类重写过没有这个 setter 方法。如果没有，添加重写的 setter 方法；  </li><br><li>添加这个观察者</li><br><br><a id="more"></a><br></ol>
 
 <pre><code>- (void)PG_addObserver:(NSObject *)observer
                 forKey:(NSString *)key

@@ -433,8 +433,7 @@
 
       
         
-          
-            <p>本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。</p>
+          <p>本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。</p>
 
 <h2 id="kvokeyvalueobserving">KVO (Key-Value Observing)</h2>
 
@@ -444,11 +443,11 @@
 
 <h2 id="kvo">KVO 实现机制</h2>
 
-<p>KVO 的实现也依赖于 Objective-C 强大的 Runtime 。Apple 的文档有简单提到过 KVO 的<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html" target="_blank" rel="external">实现</a>：</p>
+<p>KVO 的实现也依赖于 Objective-C 强大的 Runtime 。Apple 的文档有简单提到过 KVO 的<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html">实现</a>：</p>
 
 <blockquote><br>  <p>Automatic key-value observing is implemented using a technique called isa-swizzling… When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class …</p><br></blockquote>
 
-<p>Apple 的文档真是一笔带过，唯一有用的信息也就是：被观察对象的 <code>isa</code> 指针会指向一个中间类，而不是原来真正的类。看来，Apple 并不希望过多暴露 KVO 的实现细节。不过，要是你用 runtime 提供的方法去深入挖掘，所有被掩盖的细节都会原形毕露。Mike Ash 早在 2009 年就做了这么个<a href="https://www.mikeash.com/pyblog/friday-qa-2009-01-23.html" target="_blank" rel="external">探究</a>。</p>
+<p>Apple 的文档真是一笔带过，唯一有用的信息也就是：被观察对象的 <code>isa</code> 指针会指向一个中间类，而不是原来真正的类。看来，Apple 并不希望过多暴露 KVO 的实现细节。不过，要是你用 runtime 提供的方法去深入挖掘，所有被掩盖的细节都会原形毕露。Mike Ash 早在 2009 年就做了这么个<a href="https://www.mikeash.com/pyblog/friday-qa-2009-01-23.html">探究</a>。</p>
 
 <p>简单概述下 KVO 的实现：</p>
 
@@ -462,7 +461,7 @@
 
 <p>比如，你只能通过重写 <code>-observeValueForKeyPath:ofObject:change:context:</code> 方法来获得通知。想要提供自定义的 <code>selector</code> ，不行；想要传一个 <code>block</code> ，门都没有。而且你还要处理父类的情况 - 父类同样监听同一个对象的同一个属性。但有时候，你不知道父类是不是对这个消息有兴趣。虽然 <code>context</code> 这个参数就是干这个的，也可以解决这个问题 - 在 <code>-addObserver:forKeyPath:options:context:</code> 传进去一个父类不知道的 <code>context</code>。但总觉得框在这个 API 的设计下，代码写的很别扭。至少至少，也应该支持 <code>block</code> 吧。</p>
 
-<p>有不少人都觉得官方 KVO 不好使的。Mike Ash 的 <a href="https://www.mikeash.com/pyblog/key-value-observing-done-right.html" target="_blank" rel="external">Key-Value Observing Done Right</a>，以及获得不少分享讨论的 <a href="http://khanlou.com/2013/12/kvo-considered-harmful/" target="_blank" rel="external">KVO Considered Harmful</a> 都把 KVO 拿出来吊打了一番。所以在实际开发中 KVO 使用的情景并不多，更多时候还是用 Delegate 或 NotificationCenter。</p>
+<p>有不少人都觉得官方 KVO 不好使的。Mike Ash 的 <a href="https://www.mikeash.com/pyblog/key-value-observing-done-right.html">Key-Value Observing Done Right</a>，以及获得不少分享讨论的 <a href="http://khanlou.com/2013/12/kvo-considered-harmful/">KVO Considered Harmful</a> 都把 KVO 拿出来吊打了一番。所以在实际开发中 KVO 使用的情景并不多，更多时候还是用 Delegate 或 NotificationCenter。</p>
 
 <h2 id="kvo">自己实现 KVO</h2>
 
@@ -485,133 +484,14 @@
 
 <p>接下来，实现 <code>PG_addObserver:forKey:withBlock:</code> 方法。逻辑并不复杂：</p>
 
-<ol><br><li>检查对象的类有没有相应的 setter 方法。如果没有抛出异常；  </li><br><li>检查对象 <code>isa</code> 指向的类是不是一个 KVO 类。如果不是，新建一个继承原来类的子类，并把 <code>isa</code> 指向这个新建的子类；  </li><br><li>检查对象的 KVO 类重写过没有这个 setter 方法。如果没有，添加重写的 setter 方法；  </li><br><li>添加这个观察者</li><br></ol>
-
-<pre><code>- (void)PG_addObserver:(NSObject *)observer
-                forKey:(NSString *)key
-             withBlock:(PGObservingBlock)block
-{
-    // Step 1: Throw exception if its class or superclasses doesn't implement the setter
-    SEL setterSelector = NSSelectorFromString(setterForGetter(key));
-    Method setterMethod = class_getInstanceMethod([self class], setterSelector);
-    if (!setterMethod) {
-        // throw invalid argument exception
-    }
-
-    Class clazz = object_getClass(self);
-    NSString *clazzName = NSStringFromClass(clazz);
-
-    // Step 2: Make KVO class if this is first time adding observer and 
-    //          its class is not an KVO class yet
-    if (![clazzName hasPrefix:kPGKVOClassPrefix]) {
-        clazz = [self makeKvoClassWithOriginalClassName:clazzName];
-        object_setClass(self, clazz);
-    }
-
-    // Step 3: Add our kvo setter method if its class (not superclasses) 
-    //          hasn't implemented the setter
-    if (![self hasSelector:setterSelector]) {
-        const char *types = method_getTypeEncoding(setterMethod);
-        class_addMethod(clazz, setterSelector, (IMP)kvo_setter, types);
-    }
-
-    // Step 4: Add this observation info to saved observation objects
-    PGObservationInfo *info = [[PGObservationInfo alloc] initWithObserver:observer Key:key block:block];
-    NSMutableArray *observers = objc_getAssociatedObject(self, (__bridge const void *)(kPGKVOAssociatedObservers));
-    if (!observers) {
-        observers = [NSMutableArray array];
-        objc_setAssociatedObject(self, (__bridge const void *)(kPGKVOAssociatedObservers), observers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    [observers addObject:info];
-}
-</code></pre>
-
-<p>再来一步一步细看。</p>
-
-<p><strong>第一步</strong>里，先通过 <code>setterForGetter()</code> 方法获得相应的 <code>setter</code> 的名字（SEL）。也就是把 <code>key</code> 的首字母大写，然后前面加上 <code>set</code> 后面加上 <code>:</code>，这样 <code>key</code> 就变成了 <code>setKey:</code>。然后再用 <code>class_getInstanceMethod</code> 去获得 <code>setKey:</code> 的实现（Method）。如果没有，自然要抛出异常。</p>
-
-<p><strong>第二步</strong>，我们先看类名有没有我们定义的前缀。如果没有，我们就去创建新的子类，并通过 <code>object_setClass()</code> 修改 <code>isa</code> 指针。</p>
-
-<pre><code>- (Class)makeKvoClassWithOriginalClassName:(NSString *)originalClazzName
-{
-    NSString *kvoClazzName = [kPGKVOClassPrefix stringByAppendingString:originalClazzName];
-    Class clazz = NSClassFromString(kvoClazzName);
-
-    if (clazz) {
-        return clazz;
-    }
-
-    // class doesn't exist yet, make it
-    Class originalClazz = object_getClass(self);
-    Class kvoClazz = objc_allocateClassPair(originalClazz, kvoClazzName.UTF8String, 0);
-
-    // grab class method's signature so we can borrow it
-    Method clazzMethod = class_getInstanceMethod(originalClazz, @selector(class));
-    const char *types = method_getTypeEncoding(clazzMethod);
-    class_addMethod(kvoClazz, @selector(class), (IMP)kvo_class, types);
-
-    objc_registerClassPair(kvoClazz);
-
-    return kvoClazz;
-}
-</code></pre>
-
-<p>动态创建新的类需要用 <code>objc/runtime.h</code> 中定义的 <code>objc_allocateClassPair()</code> 函数。传一个父类，类名，然后额外的空间（通常为 0），它返回给你一个类。然后就给这个类添加方法，也可以添加变量。这里，我们只重写了 <code>class</code> 方法。哈哈，跟 Apple 一样，这时候我们也企图隐藏这个子类的存在。最后 <code>objc_registerClassPair()</code> 告诉 Runtime 这个类的存在。</p>
-
-<p><strong>第三步</strong>，重写 setter 方法。新的 setter 在调用原 setter 方法后，通知每个观察者（调用之前传入的 block ）：</p>
-
-<pre><code>static void kvo_setter(id self, SEL _cmd, id newValue)  
-{
-    NSString *setterName = NSStringFromSelector(_cmd);
-    NSString *getterName = getterForSetter(setterName);
-
-    if (!getterName) {
-        // throw invalid argument exception
-    }
-
-    id oldValue = [self valueForKey:getterName];
-
-    struct objc_super superclazz = {
-        .receiver = self,
-        .super_class = class_getSuperclass(object_getClass(self))
-    };
-
-    // cast our pointer so the compiler won't complain
-    void (*objc_msgSendSuperCasted)(void *, SEL, id) = (void *)objc_msgSendSuper;
-
-    // call super's setter, which is original class's setter method
-    objc_msgSendSuperCasted(&amp;superclazz, _cmd, newValue);
-
-    // look up observers and call the blocks
-    NSMutableArray *observers = objc_getAssociatedObject(self, (__bridge const void *)(kPGKVOAssociatedObservers));
-    for (PGObservationInfo *each in observers) {
-        if ([each.key isEqualToString:getterName]) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                each.block(self, getterName, oldValue, newValue);
-            });
-        }
-    }
-}
-</code></pre>
-
-<p>细心的同学会发现我们对 <code>objc_msgSendSuper</code> 进行类型转换。在 Xcode 6 里，新的 LLVM 会对 <code>objc_msgSendSuper</code> 以及 <code>objc_msgSend</code> 做严格的类型检查，如果不做类型转换。Xcode 会抱怨有 <code>too many arguments</code> 的错误。（在 WWDC 2014 的视频 <em>What new in LLVM</em> 中有提到过这个问题。）</p>
-
-<p><strong>最后一步</strong>，把这个观察的相关信息存在 <em>associatedObject</em> 里。观察的相关信息（观察者，被观察的 key, 和传入的 block ）封装在 <code>PGObservationInfo</code> 类里。</p>
-
-<pre><code>@interface PGObservationInfo : NSObject
-
-@property (nonatomic, weak) NSObject *observer;
-@property (nonatomic, copy) NSString *key;
-@property (nonatomic, copy) PGObservingBlock block;
-
-@end
-</code></pre>
-
-<p>就此，一个基本的 KVO 就可以 work 了。当然，这只是一个一天多做出来的小东西，会有 bug，也有很多可以优化完善的地方。但作为 demo 演示如何利用 Runtime 动态创建类、如何实现 KVO，足已。</p>
-
-<p>完整的例子可以从这里下载：<a href="https://github.com/ws1227/MySampleCoe" target="_blank" rel="external">ImplementKVO</a></p>
-
-          
+<ol><br><li>检查对象的类有没有相应的 setter 方法。如果没有抛出异常；  </li><br><li>检查对象 <code>isa</code> 指向的类是不是一个 KVO 类。如果不是，新建一个继承原来类的子类，并把 <code>isa</code> 指向这个新建的子类；  </li><br><li>检查对象的 KVO 类重写过没有这个 setter 方法。如果没有，添加重写的 setter 方法；  </li><br><li>添加这个观察者</li><br><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017-05-18-自己动手实现KVO.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
