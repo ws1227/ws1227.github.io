@@ -324,6 +324,203 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="wangsen.website/2017-03-28-Swift字符串常用操作.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017-03-28-Swift字符串常用操作.html" itemprop="url">
+                  Swift字符串常用操作
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-28T11:34:25+08:00">
+                2017-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Swift/" itemprop="url" rel="index">
+                    <span itemprop="name">Swift</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017-03-28-Swift字符串常用操作.html" class="leancloud_visitors" data-flag-title="Swift字符串常用操作">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><p>swift 中关于取子串有4 个方法</p></p>
+<pre><code>str.index(after: String.Index)
+str.index(before: String.Index)
+str.index(String.Index, offsetBy: String.IndexDistance)
+str.index(String.Index, offsetBy: String.IndexDistance, limitedBy: String.Index)</code></pre>
+<p>分别是什么, 该如何使用?<br>下面来看看<br>本例中, 我们创建一个字符串"Hello, playground" , 如下</p>
+<pre><code class="swift">var str = "Hello, playground"</code></pre>
+<div class="image-package">
+<img src="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/943998-beb25ba7ca18d4f1.png?imageMogr2/auto-orient/strip%7CimageView2/2"><br><div class="image-caption">字符索引</div>
+</div>
+<h3>startIndex 和 endIndex</h3>
+<ul>
+<li>startIndex  是第一个字符的索引, 也就是</li>
+<li>endIndex 是最后一个字符索引 +1</li>
+</ul>
+<pre><code>// character
+str[str.startIndex] // H
+str[str.endIndex]   // error: after last character
+
+// range
+let range = str.startIndex ..&lt; str.endIndex
+str[range]  // "Hello, playground"</code></pre>
+<h3>after</h3>
+<p><code>index(after: String.Index)</code><br>after 指向给定索引后面的一个索引(类似与 + 1)</p>
+<pre><code>// character
+let index = str.index(after: str.startIndex)
+str[index]  // "e"
+
+// range
+let range = str.index(after: str.startIndex)..&lt;str.endIndex
+str[range]  // "ello, playground"</code></pre>
+<h3>before</h3>
+<p><code>index(before: String.Index)</code><br>before 指向给定索引之前的一个索引(类似与 - 1)</p>
+<pre><code>// character
+let index = str.index(before: str.endIndex)
+str[index]  // d
+
+// range
+let range = str.startIndex ..&lt; str.index(before: str.endIndex)
+str[range]  // Hello, playgroun</code></pre>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017-03-28-Swift字符串常用操作.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="wangsen.website/2017-03-16-myResume.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -790,7 +987,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
