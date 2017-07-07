@@ -324,7 +324,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="www.wangsen.website/2017-04-25-解决xcode8-2-NSlog数据打印不全.html">
+    <link itemprop="mainEntityOfPage" href="www.wangsen.website/posts/16299/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="王森">
@@ -346,7 +346,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017-04-25-解决xcode8-2-NSlog数据打印不全.html" itemprop="url">
+                <a class="post-title-link" href="/posts/16299/" itemprop="url">
                   解决xcode8.2控制台数据打印不全
                 </a>
               
@@ -403,7 +403,7 @@
 
           
           
-             <span id="/2017-04-25-解决xcode8-2-NSlog数据打印不全.html" class="leancloud_visitors" data-flag-title="解决xcode8.2控制台数据打印不全">
+             <span id="/posts/16299/" class="leancloud_visitors" data-flag-title="解决xcode8.2控制台数据打印不全">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -481,7 +481,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="www.wangsen.website/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html">
+    <link itemprop="mainEntityOfPage" href="www.wangsen.website/posts/14803/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="王森">
@@ -503,7 +503,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html" itemprop="url">
+                <a class="post-title-link" href="/posts/14803/" itemprop="url">
                   解决TableViewCell和CollectionViewCell复用布局错乱问题
                 </a>
               
@@ -560,7 +560,7 @@
 
           
           
-             <span id="/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html" class="leancloud_visitors" data-flag-title="解决TableViewCell和CollectionViewCell复用布局错乱问题">
+             <span id="/posts/14803/" class="leancloud_visitors" data-flag-title="解决TableViewCell和CollectionViewCell复用布局错乱问题">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -597,7 +597,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">/ /方案一  通过不让他重用cell 来解决重复显示 不同的是每个cell对应一个标识</div><div class="line">- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath</div><div class="line">&#123;</div><div class="line">    // 定义cell标识  每个cell对应一个自己的标识</div><div class="line">    NSString *CellIdentifier = [NSString stringWithFormat:@&quot;cell%ld%ld&quot;,indexPath.section,indexPath.row];</div><div class="line">    // 通过不同标识创建cell实例</div><div class="line">    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];</div><div class="line">    // 判断为空进行初始化  --（当拉动页面显示超过主页面内容的时候就会重用之前的cell，而不会再次初始化）</div><div class="line">    if (!cell) &#123;</div><div class="line">        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];</div><div class="line">    &#125;</div><div class="line">    // 对cell 进行简单地数据配置</div><div class="line">    cell.textLabel.text = @&quot;text&quot;;</div><div class="line">    cell.detailTextLabel.text = @&quot;text&quot;;</div><div class="line">    cell.imageView.image = [UIImage imageNamed:@&quot;4.png&quot;];</div><div class="line">    </div><div class="line">    return cell;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017-03-30-解决TableViewCell和CollectionViewCell复用布局错乱问题.html#more" rel="contents">
+            <a class="btn" href="/posts/14803/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -643,7 +643,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="www.wangsen.website/2017-03-29-Swift函数与闭包的应用实例.html">
+    <link itemprop="mainEntityOfPage" href="www.wangsen.website/posts/9416/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="王森">
@@ -665,7 +665,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017-03-29-Swift函数与闭包的应用实例.html" itemprop="url">
+                <a class="post-title-link" href="/posts/9416/" itemprop="url">
                   Swift函数与闭包的应用实例
                 </a>
               
@@ -722,7 +722,7 @@
 
           
           
-             <span id="/2017-03-29-Swift函数与闭包的应用实例.html" class="leancloud_visitors" data-flag-title="Swift函数与闭包的应用实例">
+             <span id="/posts/9416/" class="leancloud_visitors" data-flag-title="Swift函数与闭包的应用实例">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -756,7 +756,7 @@
 <div class="clear"></div><br>            <div id="cnblogs_post_body"><p>　　今天的博客算是比较基础的，还是那句话，基础这东西在什么时候都是最重要的。说到函数，只要是写过程序就肯定知道函数是怎么回事，今天就来讨论一下Swift中的函数的特性以及Swift中的闭包。今天的一些小实例中回类比一下Objective-C中的函数的写法等等。Swift中的函数还是有许多好用的特性的，比如输入参数，使用元组返回多个值， 定义形参名，设定默认参数以及可变参数等等一些好用的特性。而在Swift中的闭包就是Objective-C中的Block, 除了语法不通外，两者的用法是一样的。废话少说，开始今天的主题，先搞一搞Swift中的函数，然后在搞一搞Swift中的闭包。</p><br><p><span style="color: #008000; font-size: 18px;">　　一.Swift中的函数</span></p><br><p>　　　　1. 函数的定义与使用</p><br><p>　　　　　在介绍Swift中的函数之前，我想用Objective-C中的一个简单的加法函数来作为引子，然后类比着实现一下Swift中相同功能的函数。关于函数定义就比较简单了，就是一些语法的东西，下面的代码片段是Objc中求两个整数之和的函数，并返回两个数的和。</p><br><div class="cnblogs_code"><br><pre>-<span style="color: #000000;"> (NSInteger)sumNumber1:(NSInteger) number1<br>                number2:(NSInteger) number2 {<br>    </span><span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br>}</span></pre><br></div><br><p>　　　　函数的功能比较简单了，就是把两个整数传进来，然后返回两个整数的和。接下来将用Swift语言实现，也好通过这个实例来熟悉一下Swift语言中定义函数的语法。下方是Swift语言中求两个整数之和的函数。语法比较简单了，在Swift中定义函数，我们会使用到关键字<span style="color: #ff6600;">func</span>来声明函数。</p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> <span style="color: #008000;">//</span><span style="color: #008000;">函数定义</span><br><span style="color: #008080;">2</span> func sum (number1:Int, number2:Int) -&gt;<span style="color: #000000;"> Int{<br></span><span style="color: #008080;">3</span>     <span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br></span><span style="color: #008080;">4</span> }</pre><br></div><br><p>　　　　用文字来描述Swift定义基本函数的语法就是:<span style="color: #ff6600;"> func <span style="color: #008000;">函数名</span> （形参<span style="color: #008000;">列表</span>） -&gt; <span style="color: #008000;">返回值类型</span> { <span style="color: #008000;">函数体</span>}，<span style="color: #000000;">这样你就可以定义一个函数了。当然，函数定义时还有好多其他的用法，下面会详细介绍。上面函数的调用方法如下：</span></span></p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> let sumTwoNubmer = sum(<span style="color: #800080;">2</span>, number2: <span style="color: #800080;">3</span>);</pre><br></div><br><p>&nbsp;</p><br><p>　　　　2. 函数中的形参列表</p><br><p>　　　　关于函数中的形参列表还是有必要提上一嘴的，因为形参列表作为函数数据源之一，所以把参数列表好好的搞一搞还是很有必要的。参数列表也有很多好用的使用方式，接下来详细的介绍一下函数的形参列表。</p><br><p>　　　　(1) 默认的形参是常量（let）</p><br><p>　　　　　　在函数的形参列表中，默认的形参是常量。也就是相当于用<span style="color: #ff6600;">let</span>关键字对形参进行修饰了。我们可以做个试验，把上面加法函数做一个修改，在加法函数中对number1进行加1操作，你会得到一个错误，这个错误的大体意思就是&ldquo;number1是不可被修改的，因为它是let类型的常量&rdquo;。并且编译器还给人出了Fix-it（修复）的方案，就是在number1前面使用<span style="color: #ff6600;">var</span>关键字进行修饰，使其成为变量，这样才可以修改其值。</p><br><p>　　　　　　上面说这么多，一句话：形参默认是常量，如果你想让其是变量，那么你可以使用var关键字进行修饰，这样被关键字var修饰的变量在函数中就可以被修改。下方就是报的这个错误，和编译器提供的解决方案。（在Objc中默认可以在函数中改变形参的值）</p><br><p><img style="display: block; margin-left: auto; margin-right: auto;" src="http://images2015.cnblogs.com/blog/545446/201511/545446-20151116135154655-201247640.png" alt="" width="647" height="91" /></p><br><p>&nbsp;</p><br><p>　　　　（2）给形参命名</p><br><p>　　　　　　为了代码的可读性和可维护性，我们在定义函数时，需要为每个参数名一个名字，这样调用者见名知意，很容易就知道这个参数代表什么意思了。接下来还是在上述加法函数中进行修改，为每个参数名一个名字，并看一下调用方式。修改上面的函数，给第一个形参命名成numberOne, 第二个形参为numberTwo, 下方是修改后的函数。 紧接着sum()函数的调用方式也会有所改变，在调用函数时编译器会给出参数的名称，这样调用者一目了然。</p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> <span style="color: #008000;">//</span><span style="color: #008000;">函数定义</span><br><span style="color: #008080;">2</span> func sum (numberOne number1:Int, numberTwo number2:Int) -&gt;<span style="color: #000000;"> Int{<br></span><span style="color: #008080;">3</span>     <span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br></span><span style="color: #008080;">4</span> <span style="color: #000000;">}<br></span><span style="color: #008080;">5</span><br><span style="color: #008080;">6</span> let sumTwoNubmer = sum(numberOne: <span style="color: #800080;">10</span>, numberTwo: <span style="color: #800080;">20</span>);</pre><br></div><br><p>　　　　 &nbsp;调用上述函数时，下方是编译器给出的提示，一目了然呢。<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="http://images2015.cnblogs.com/blog/545446/201511/545446-20151116141632358-1326285688.png" alt="" width="401" height="119" /></p><br><p>　　　　　关于Swift中参数名的内容，要说明的是在Swift1.0的时候，你可以在参数前面添加上#号，然后参数名就与变量（或者常量）的名字相同，而Swift2.0后这个东西去掉了，因为默认就相当于Swift1.0中添加#号。</p><br><p>&nbsp;</p><br><br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017-03-29-Swift函数与闭包的应用实例.html#more" rel="contents">
+            <a class="btn" href="/posts/9416/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -802,7 +802,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="www.wangsen.website/2017-03-28-Swift字符串常用操作.html">
+    <link itemprop="mainEntityOfPage" href="www.wangsen.website/posts/3254/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="王森">
@@ -824,7 +824,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017-03-28-Swift字符串常用操作.html" itemprop="url">
+                <a class="post-title-link" href="/posts/3254/" itemprop="url">
                   Swift字符串常用操作
                 </a>
               
@@ -881,7 +881,7 @@
 
           
           
-             <span id="/2017-03-28-Swift字符串常用操作.html" class="leancloud_visitors" data-flag-title="Swift字符串常用操作">
+             <span id="/posts/3254/" class="leancloud_visitors" data-flag-title="Swift字符串常用操作">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -953,7 +953,7 @@ let range = str.startIndex ..&lt; str.index(before: str.endIndex)
 str[range]  // Hello, playgroun</code></pre>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017-03-28-Swift字符串常用操作.html#more" rel="contents">
+            <a class="btn" href="/posts/3254/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -999,7 +999,7 @@ str[range]  // Hello, playgroun</code></pre>
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="www.wangsen.website/2017-03-16-myResume.html">
+    <link itemprop="mainEntityOfPage" href="www.wangsen.website/posts/10633/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="王森">
@@ -1021,7 +1021,7 @@ str[range]  // Hello, playgroun</code></pre>
             
               
                 
-                <a class="post-title-link" href="/2017-03-16-myResume.html" itemprop="url">
+                <a class="post-title-link" href="/posts/10633/" itemprop="url">
                   myResume
                 </a>
               
@@ -1056,7 +1056,7 @@ str[range]  // Hello, playgroun</code></pre>
 
           
           
-             <span id="/2017-03-16-myResume.html" class="leancloud_visitors" data-flag-title="myResume">
+             <span id="/posts/10633/" class="leancloud_visitors" data-flag-title="myResume">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1089,7 +1089,7 @@ str[range]  // Hello, playgroun</code></pre>
           <html><head><title>简历预览</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="robots" content="nofollow" /><link rel="stylesheet" type="text/css" href="https://img00.zhaopin.cn/2012/css/reset.min.css" media="all" /><link rel="stylesheet" type="text/css" href="https://i.zhaopin.com/Content/css/resume_preview.css" media="all" /></head><body><div class="resumeBody"><div class="summary"><h1>王森</h1>男<span class="ver-line">|</span>未婚<span class="ver-line">|</span>1992年2月生<span class="ver-line">|</span><br>            户口：河南-南阳<span class="ver-line">|</span><br>              现居住于:北京-朝阳区<br />2.5年工作经验<br>            <span class="ver-line">|</span>团员<p>Tel:15617877692</p><p><br>              E-mail：<a href="mailto:sslxws@163.com">sslxws@163.com</a></p><br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017-03-16-myResume.html#more" rel="contents">
+            <a class="btn" href="/posts/10633/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1135,7 +1135,7 @@ str[range]  // Hello, playgroun</code></pre>
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="www.wangsen.website/2017-03-15-Hexo配合github搭建免费博客，绑定域名.html">
+    <link itemprop="mainEntityOfPage" href="www.wangsen.website/posts/10450/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="王森">
@@ -1157,7 +1157,7 @@ str[range]  // Hello, playgroun</code></pre>
             
               
                 
-                <a class="post-title-link" href="/2017-03-15-Hexo配合github搭建免费博客，绑定域名.html" itemprop="url">
+                <a class="post-title-link" href="/posts/10450/" itemprop="url">
                   Hexo配合github搭建免费博客，绑定域名
                 </a>
               
@@ -1214,7 +1214,7 @@ str[range]  // Hello, playgroun</code></pre>
 
           
           
-             <span id="/2017-03-15-Hexo配合github搭建免费博客，绑定域名.html" class="leancloud_visitors" data-flag-title="Hexo配合github搭建免费博客，绑定域名">
+             <span id="/posts/10450/" class="leancloud_visitors" data-flag-title="Hexo配合github搭建免费博客，绑定域名">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1247,7 +1247,7 @@ str[range]  // Hello, playgroun</code></pre>
           <p>出发点：有那么大的博客平台不用为什么自己搭建博客，说白了就是玩玩坚持写几篇博客然后就是装逼了呗。</p><br><p><a href="http://www.jianshu.com/p/034d888abcb3" target="_blank" rel="external">本篇文章在我的简书地址</a></p><br><p>今天要讲的搭建博客教程很简单不需要什么钱当然有钱可以买虚拟机配个数据库可以玩wordpress搭建博客更简单，记得万网有活动几块钱就可以买个一年的虚拟机活动长期有可以看看，这里就不详细介绍了。</p><br><p>言归正传，本篇博客说的是用github和  <a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="external">Hexo</a>搭建一个免费的博客网站，搭建完看起来像这样 <a href="http://ws1227.github.io" target="_blank" rel="external">http://ws1227.github.io</a> 如果有个人域名就可以类似这样<a href="http://wangsen.website/">http://wangsen.website/</a> 后边再介绍。</p><br><p> 先说下需要的基本条件：</p><br><h5 id="安装Node（必须）"><a href="#安装Node（必须）" class="headerlink" title="安装Node（必须）"></a>安装Node（必须）</h5><p> 作用：用来生成静态页面的 到Node.js官网下载相应平台的最新版本，一路安装即可。提供一个mac版本的<a href="https://pan.baidu.com/s/1gf5NSyf" target="_blank" rel="external">https://pan.baidu.com/s/1gf5NSyf</a> 不用翻墙下载了</p><br><h5 id="安装Git（必须）"><a href="#安装Git（必须）" class="headerlink" title="安装Git（必须）"></a>安装Git（必须）</h5><p>作用：把本地的hexo内容提交到github上去. 安装Xcode就自带有Git，我就不多说了。没有的话可以去<a href="https://git-scm.com/downloads" target="_blank" rel="external">https://git-scm.com/downloads</a> 下载</p><br><h4 id="申请GitHub（必须）"><a href="#申请GitHub（必须）" class="headerlink" title="申请GitHub（必须）"></a>申请GitHub（必须）</h4><p>作用：是用来做博客的远程创库、域名、服务器之类的，怎么与本地hexo建立连接等下讲。 github账号我也不再啰嗦了,没有的话直接申请就行了，跟一般的注册账号差不多，SSH Keys，看你自己了，可以不配制，不配置的话以后每次对自己的博客有改动提交的时候就要手动输入账号密码，配置了就不需要了，怎么配置我就不多说了，网上有很多教程。</p><br><h4 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h4><p>Node和Git都安装好后，可执行如下命令安装hexo：</p><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo npm install -g hexo</div></pre></td></tr></table></figure><br><p>创建一个文件夹，如：Blog，cd到Blog里执行hexo init的。命令：</p><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo init</div></pre></td></tr></table></figure><br><p>好啦，至此，全部安装工作已经完成！</p><br><p>因为Hexo编写的文章都是用 <a href="http://markdown.tw/" target="_blank" rel="external">markdown</a>语法写的 所以需要生成静态界面也就是Html网页。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017-03-15-Hexo配合github搭建免费博客，绑定域名.html#more" rel="contents">
+            <a class="btn" href="/posts/10450/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1293,7 +1293,7 @@ str[range]  // Hello, playgroun</code></pre>
   
 
   <article class="post post-type-测试分类 " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="www.wangsen.website/2017-03-15-hello-world.html">
+    <link itemprop="mainEntityOfPage" href="www.wangsen.website/posts/16107/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="王森">
@@ -1315,7 +1315,7 @@ str[range]  // Hello, playgroun</code></pre>
             
               
                 
-                <a class="post-title-link" href="/2017-03-15-hello-world.html" itemprop="url">
+                <a class="post-title-link" href="/posts/16107/" itemprop="url">
                   Hello World
                 </a>
               
@@ -1350,7 +1350,7 @@ str[range]  // Hello, playgroun</code></pre>
 
           
           
-             <span id="/2017-03-15-hello-world.html" class="leancloud_visitors" data-flag-title="Hello World">
+             <span id="/posts/16107/" class="leancloud_visitors" data-flag-title="Hello World">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
