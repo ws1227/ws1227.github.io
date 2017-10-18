@@ -1,0 +1,1127 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="F_pmJOje5pcXixoVap4Vk7vlUPHG5UbaU4Hzn_uhgck" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="###python之HTMLParser解析HTML文档
+HTMLParser是Python自带的模块，使用简单，能够很容易的实现HTML文件的分析。本文主要简单讲一下HTMLParser的用法. 
+使用时需要定义一个从类HTMLParser继承的类，重定义函数：
+
+handle_starttag( tag, attrs)
+handle_startendtag( tag, attrs)
+handl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python之HTMLParser解析HTML文档">
+<meta property="og:url" content="www.wangsen.website/posts/4627/index.html">
+<meta property="og:site_name" content="王森博客">
+<meta property="og:description" content="###python之HTMLParser解析HTML文档
+HTMLParser是Python自带的模块，使用简单，能够很容易的实现HTML文件的分析。本文主要简单讲一下HTMLParser的用法. 
+使用时需要定义一个从类HTMLParser继承的类，重定义函数：
+
+handle_starttag( tag, attrs)
+handle_startendtag( tag, attrs)
+handl">
+<meta property="og:updated_time" content="2017-10-18T05:38:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python之HTMLParser解析HTML文档">
+<meta name="twitter:description" content="###python之HTMLParser解析HTML文档
+HTMLParser是Python自带的模块，使用简单，能够很容易的实现HTML文件的分析。本文主要简单讲一下HTMLParser的用法. 
+使用时需要定义一个从类HTMLParser继承的类，重定义函数：
+
+handle_starttag( tag, attrs)
+handle_startendtag( tag, attrs)
+handl">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="www.wangsen.website/posts/4627/"/>
+
+
+
+
+
+  <title> python之HTMLParser解析HTML文档 | 王森博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-93848721-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b0e8472d72769ebfb2c0890101ae3f10";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=61230218";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">王森博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">技术随笔</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="www.wangsen.website/posts/4627/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                python之HTMLParser解析HTML文档
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-26T12:01:54+08:00">
+                2017-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/posts/4627/" class="leancloud_visitors" data-flag-title="python之HTMLParser解析HTML文档">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>###python之HTMLParser解析HTML文档</p>
+<p>HTMLParser是Python自带的模块，使用简单，能够很容易的实现HTML文件的分析。<br>本文主要简单讲一下HTMLParser的用法. </p>
+<p>使用时需要定义一个从类HTMLParser继承的类，重定义函数：</p>
+<ul>
+<li>handle_starttag( tag, attrs)</li>
+<li>handle_startendtag( tag, attrs)</li>
+<li>handle_endtag( tag)</li>
+<li>handle_data(data)</li>
+</ul>
+<h3 id="1-获取标签属性"><a href="#1-获取标签属性" class="headerlink" title="1. 获取标签属性"></a>1. 获取标签属性</h3><p>tag是的html标签，attrs是 (属性，值)元组(tuple)的列表(list). </p>
+<p>如一个标签为：<input type="hidden" name="NXX" id="IDXX" value="VXX"></p>
+<p>那么它的attrs列表为[(‘type’, ‘hidden’), (‘name’, ‘NXX’), (‘id’, ‘IDXX’), (‘value’, ‘VXX’)]<br>HTMLParser自动将tag和attrs都转为小写。</p>
+<p>下面给出的例子抽取了html中的所有链接：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> HTMLParser <span class="keyword">import</span> HTMLParser</div><div class="line">  </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyHTMLParser</span><span class="params">(HTMLParser)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        HTMLParser.__init__(self)</div><div class="line">        self.links = []</div><div class="line">  </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_starttag</span><span class="params">(self, tag, attrs)</span>:</span></div><div class="line">        <span class="comment">#print "Encountered the beginning of a %s tag" % tag</span></div><div class="line">        <span class="keyword">if</span> tag == <span class="string">"a"</span>:</div><div class="line">            <span class="keyword">if</span> len(attrs) == <span class="number">0</span>: <span class="keyword">pass</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">for</span> (variable, value)  <span class="keyword">in</span> attrs:</div><div class="line">                    <span class="keyword">if</span> variable == <span class="string">"href"</span>:</div><div class="line">                        self.links.append(value)</div><div class="line">  </div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</div><div class="line">    html_code = <span class="string">"""</span></div><div class="line">    &lt;a href="www.google.com"&gt; google.com&lt;/a&gt;</div><div class="line">    &lt;A Href="www.pythonclub.org"&gt; PythonClub &lt;/a&gt;</div><div class="line">    &lt;A HREF = "www.sina.com.cn"&gt; Sina &lt;/a&gt;</div><div class="line">    """</div><div class="line">    hp = MyHTMLParser()</div><div class="line">    hp.feed(html_code)</div><div class="line">    hp.close()</div><div class="line">    print(hp.links)</div></pre></td></tr></table></figure>
+<p>输出为：</p>
+<blockquote>
+<p>[‘www.google.com’, ‘www.pythonclub.org’, ‘www.sina.com.cn’]</p>
+</blockquote>
+<p>如果想抽取图形链接：<br><code>&lt;img src=&#39;http://www.google.com/intl/zh-CN_ALL/images/logo.gif&#39; /&gt;</code><br>就要重定义 handle_startendtag( tag, attrs) 函数<br> <a id="more"></a></p>
+<h3 id="2-获取标签内容"><a href="#2-获取标签内容" class="headerlink" title="2. 获取标签内容　　"></a>2. 获取标签内容　　</h3><p>test1.html文件内容如下：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span> XHTML 与 HTML 4.01 标准没有太多的不同<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">i love you</div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h5 id="2-1-第一个例子"><a href="#2-1-第一个例子" class="headerlink" title="2.1 第一个例子"></a>2.1 第一个例子</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">import HTMLParser</div><div class="line"> </div><div class="line">class TitleParser(HTMLParser.HTMLParser):</div><div class="line">    def __init__(self):</div><div class="line">        HTMLParser.HTMLParser.__init__(self)</div><div class="line">        # self.taglevels=[]</div><div class="line">        self.handledtags = [&apos;title&apos;,&apos;body&apos;]</div><div class="line">        self.processing = None</div><div class="line"> </div><div class="line">    def handle_starttag(self,tag,attrs):</div><div class="line">        print &apos;--------------&apos;</div><div class="line">        print &apos;handle start func&apos;,tag</div><div class="line"> </div><div class="line">    def handle_endtag(self,tag):</div><div class="line">        print &apos;================&apos;</div><div class="line">        print &apos;handle end func&apos;,tag</div><div class="line"> </div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    fd=open(&apos;test1.html&apos;)</div><div class="line">    tp=TitleParser()</div><div class="line">    tp.feed(fd.read())</div></pre></td></tr></table></figure>
+<p> 运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">--------------</div><div class="line">handle start func html</div><div class="line">--------------</div><div class="line">handle start func head</div><div class="line">--------------</div><div class="line">handle start func title</div><div class="line">=======================</div><div class="line">handle end func title</div><div class="line">=======================</div><div class="line">handle end func head</div><div class="line">--------------</div><div class="line">handle start func body</div><div class="line">=======================</div><div class="line">handle end func body</div><div class="line">=======================</div><div class="line">handle end func html</div></pre></td></tr></table></figure>
+<p> 相信大家已经看出来了，解析时碰到&lt;<strong><em>&gt;，自动调用handle_starttag()；碰到&lt;/</em></strong>&gt;，自动调用handle_endtag()</p>
+<h5 id="2-2-添加handle-data方法"><a href="#2-2-添加handle-data方法" class="headerlink" title="2.2 添加handle_data方法"></a>2.2 添加handle_data方法</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">import HTMLParser</div><div class="line"> </div><div class="line">class TitleParser(HTMLParser.HTMLParser):</div><div class="line">    def __init__(self):</div><div class="line">        HTMLParser.HTMLParser.__init__(self)</div><div class="line">        # self.taglevels=[]</div><div class="line">        self.handledtags = [&apos;title&apos;,&apos;body&apos;]</div><div class="line">        self.processing = None</div><div class="line"> </div><div class="line">    def handle_starttag(self,tag,attrs):</div><div class="line">        print &apos;--------------&apos;</div><div class="line">        print &apos;handle start func&apos;,tag</div><div class="line"> </div><div class="line">    def handle_data(self,data):</div><div class="line">        print &apos;####&apos;</div><div class="line">        print &apos;handle data func&apos;</div><div class="line">        if data == &apos;\n&apos;:</div><div class="line">            print r&apos;\n&apos;</div><div class="line">        else:</div><div class="line">            print data,</div><div class="line"> </div><div class="line">    def handle_endtag(self,tag):</div><div class="line">        print &apos;=======================&apos;</div><div class="line">        print &apos;handle end func&apos;,tag</div><div class="line"> </div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    fd=open(&apos;test1.html&apos;)</div><div class="line">    tp=TitleParser()</div><div class="line">    tp.feed(fd.read())</div></pre></td></tr></table></figure>
+<p> 运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">--------------</div><div class="line">handle start func html</div><div class="line">####</div><div class="line">handle data func</div><div class="line">\n</div><div class="line">--------------</div><div class="line">handle start func head</div><div class="line">####</div><div class="line">handle data func</div><div class="line">\n</div><div class="line">--------------</div><div class="line">handle start func title</div><div class="line">####</div><div class="line">handle data func</div><div class="line"> XHTML 与 HTML 4.01 标准没有太多的不同 =======================</div><div class="line">handle end func title</div><div class="line">####</div><div class="line">handle data func</div><div class="line">\n</div><div class="line">=======================</div><div class="line">handle end func head</div><div class="line">####</div><div class="line">handle data func</div><div class="line">\n</div><div class="line">--------------</div><div class="line">handle start func body</div><div class="line">####</div><div class="line">handle data func</div><div class="line"> </div><div class="line">i love you</div><div class="line">=======================</div><div class="line">handle end func body</div><div class="line">####</div><div class="line">handle data func</div><div class="line">\n</div><div class="line">=======================</div><div class="line">handle end func html</div></pre></td></tr></table></figure>
+<p>说明：</p>
+<ul>
+<li>每一个标签，无论&lt;&gt; 还是&lt;/&gt;，均会调用handle_data()</li>
+<li>html中第一行、第二行分别为<html>和<head>，后面无具体数据，只有回车换行，所用调用handle_data()，打印结果为换行；</head></html>同理。</li>
+</ul>
+<h6 id="2-2-1-解析需要的内容"><a href="#2-2-1-解析需要的内容" class="headerlink" title="2.2.1 解析需要的内容"></a>2.2.1 解析需要的内容</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">import HTMLParser</div><div class="line"> </div><div class="line">class TitleParser(HTMLParser.HTMLParser):</div><div class="line">    def __init__(self):</div><div class="line">        HTMLParser.HTMLParser.__init__(self)</div><div class="line">        self.handledtags = [&apos;title&apos;,&apos;body&apos;]</div><div class="line">        self.processing = None</div><div class="line">        self.data = []</div><div class="line"> </div><div class="line">    def handle_starttag(self,tag,attrs):</div><div class="line">        if tag in self.handledtags:</div><div class="line">            self.processing = tag</div><div class="line"> </div><div class="line">    def handle_data(self,data):</div><div class="line">        if self.processing:</div><div class="line">            self.data.append(data)</div><div class="line"> </div><div class="line">    def handle_endtag(self,tag):</div><div class="line">        if tag == self.processing:</div><div class="line">            self.processing = None</div><div class="line"> </div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    fd = open(&apos;test1.html&apos;)</div><div class="line">    tp = TitleParser()</div><div class="line">    tp.feed(fd.read())</div><div class="line">    for each in tp.data:</div><div class="line">        print each</div></pre></td></tr></table></figure>
+<p> 运行结果：</p>
+<blockquote>
+<p>XHTML 与 HTML 4.01 标准没有太多的不同</p>
+<p>i love you</p>
+</blockquote>
+<h4 id="2-3-解析豆瓣热门电影实例"><a href="#2-3-解析豆瓣热门电影实例" class="headerlink" title="2.3 解析豆瓣热门电影实例"></a>2.3 解析豆瓣热门电影实例</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> html.parser <span class="keyword">import</span> HTMLParser</div><div class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> request</div><div class="line"><span class="keyword">import</span> ssl</div><div class="line"><span class="comment"># 取消ssl验证</span></div><div class="line">ssl._create_default_https_context = ssl._create_unverified_context</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyHTMLParser</span><span class="params">(HTMLParser)</span>:</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        HTMLParser.__init__(self)</div><div class="line">        self.movies = []</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_starttag</span><span class="params">(self, tag, attrs)</span>:</span></div><div class="line">        print(<span class="string">'star: &lt;%s&gt; 属性 %s'</span> % (tag ,attrs))</div><div class="line">        <span class="function"><span class="keyword">def</span> <span class="title">_attr</span><span class="params">(attrlist, attrname)</span>:</span></div><div class="line">            <span class="keyword">for</span> each <span class="keyword">in</span> attrlist:</div><div class="line">                <span class="keyword">if</span> attrname == each[<span class="number">0</span>]:</div><div class="line">                    <span class="keyword">return</span> each[<span class="number">1</span>]</div><div class="line">        <span class="keyword">if</span> tag == <span class="string">'li'</span> <span class="keyword">and</span> _attr(attrs, <span class="string">'data-title'</span>):</div><div class="line">            movie = &#123;&#125;</div><div class="line">            movie[<span class="string">'actors'</span>] = _attr(attrs, <span class="string">'data-actors'</span>)</div><div class="line">            movie[<span class="string">'actors'</span>] = _attr(attrs, <span class="string">'data-actors'</span>)</div><div class="line">            movie[<span class="string">'director'</span>] = _attr(attrs, <span class="string">'data-director'</span>)</div><div class="line">            movie[<span class="string">'duration'</span>] = _attr(attrs, <span class="string">'data-dutation'</span>)</div><div class="line">            movie[<span class="string">'title'</span>] = _attr(attrs, <span class="string">'data-title'</span>)</div><div class="line">            movie[<span class="string">'rate'</span>] = _attr(attrs, <span class="string">'data-rate'</span>)</div><div class="line">            print(_attr(attrs, <span class="string">'data-actors'</span>))</div><div class="line">            self.movies.append(movie)</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_endtag</span><span class="params">(self, tag)</span>:</span></div><div class="line">        print(<span class="string">'end: &lt;/%s&gt;'</span> % tag)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_startendtag</span><span class="params">(self, tag, attrs)</span>:</span></div><div class="line">        print(<span class="string">'startendtag :&lt;%s/&gt; 结尾属性 %s'</span> % (tag,attrs))</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_data</span><span class="params">(self, data)</span>:</span></div><div class="line">         print(<span class="string">'所有data %s'</span> % data)</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_comment</span><span class="params">(self, data)</span>:</span></div><div class="line">        print(<span class="string">'&lt;!--'</span>, data, <span class="string">'--&gt;'</span>)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_entityref</span><span class="params">(self, name)</span>:</span></div><div class="line">        print(<span class="string">'&amp;%s;'</span> % name)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_charref</span><span class="params">(self, name)</span>:</span></div><div class="line">        print(<span class="string">'&amp;#%s;'</span> % name)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">movieparser</span><span class="params">(url)</span>:</span></div><div class="line">    myparser = MyHTMLParser()</div><div class="line">    <span class="keyword">with</span> request.urlopen(url) <span class="keyword">as</span> f:</div><div class="line">        data = f.read().decode(<span class="string">'utf-8'</span>)</div><div class="line">        myparser.feed(data)</div><div class="line">        myparser.close()</div><div class="line"></div><div class="line">    <span class="keyword">return</span> myparser.movies</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    url = <span class="string">'https://movie.douban.com/'</span></div><div class="line">    movies = movieparser(url)</div><div class="line">    <span class="keyword">for</span> each <span class="keyword">in</span> movies:</div><div class="line">        print(<span class="string">'%(title)s|%(rate)s|%(actors)s|%(director)s|%(duration)s'</span> % each)</div></pre></td></tr></table></figure>
+<p> 运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">猩球崛起3：终极之战 War for the Planet of the Apes|7.1|安迪·瑟金斯 / 伍迪·哈里森 / 史蒂夫·茨恩|马特·里夫斯|None</div><div class="line">王牌保镖 The Hitman&apos;s Bodyguard|7.3|瑞恩·雷诺兹 / 塞缪尔·杰克逊 / 加里·奥德曼|帕特里克·休斯|None</div><div class="line">羞羞的铁拳||艾伦 / 马丽 / 沈腾|宋阳|None</div><div class="line">看不见的客人 Contratiempo|8.7|马里奥·卡萨斯 / 阿娜·瓦格纳 / 何塞·科罗纳|奥里奥尔·保罗|None</div><div class="line">缝纫机乐队||大鹏 / 乔杉 / 娜扎|大鹏|None</div><div class="line">蜘蛛侠：英雄归来 Spider-Man: Homecoming|7.5|汤姆·霍兰德 / 小罗伯特·唐尼 / 玛丽莎·托梅|乔·沃茨|None</div><div class="line">英伦对决 The Foreigner||成龙 / 皮尔斯·布鲁斯南 / 刘涛|马丁·坎贝尔|None</div><div class="line">空天猎||李晨 / 范冰冰 / 王千源|李晨|None</div><div class="line">追龙 追龍||甄子丹 / 刘德华 / 姜皓文|王晶|None</div><div class="line">托马斯大电影之了不起的比赛 Thomas &amp; Friends: The Great Race||马克·莫拉根 / 大卫·拜德拉 / 奥利维娅·科尔曼|大卫·斯特登|None</div><div class="line">惊天解密 Unlocked|5.7|劳米·拉佩斯 / 托妮·科莱特 / 奥兰多·布鲁姆|迈克尔·艾普特|None</div><div class="line">敦刻尔克 Dunkirk|8.6|菲恩·怀特海德 / 汤姆·格林-卡尼 / 杰克·劳登|克里斯托弗·诺兰|None</div><div class="line">战狼2|7.4|吴京 / 弗兰克·格里罗 / 吴刚|吴京|None</div><div class="line">捍卫者||白恩 / 吕星辰 / 赫子铭|廖希|None</div><div class="line">刀剑神域：序列之争 劇場版 ソードアート・オンライン -オーディナル・スケール|7.2|松冈祯丞 / 户松遥 / 伊藤加奈惠|伊藤智彦|None</div><div class="line">极致追击||奥兰多·布鲁姆 / 吴磊 / 任达华|Charles|None</div><div class="line">天梯：蔡国强的艺术|8.6|蔡国强 / 蔡文悠 / 蔡文浩|凯文·麦克唐纳|None</div><div class="line">昆塔：反转星球||李正翔 / 洪海天 / 陶典|李炼|None</div><div class="line">理查大冒险 Richard the Stork||尼科莱特·克雷比茨 / Marc / Jason|托比·格恩科尔|None</div><div class="line">银魂 銀魂|7.4|小栗旬 / 菅田将晖 / 桥本环奈|福田雄一|None</div><div class="line">画室惊魂||罗翔 / 杨欣 / 陈美行|邢博|None</div><div class="line">钢铁飞龙之再见奥特曼||侯勇 / 大张伟 / 金晨|王巍|None</div><div class="line">海边的曼彻斯特 Manchester by the Sea|8.6|卡西·阿弗莱克 / 卢卡斯·赫奇斯 / 米歇尔·威廉姆斯|肯尼斯·罗纳根|None</div><div class="line">星际特工：千星之城 Valérian and the City of a Thousand Planets|7.2|戴恩·德哈恩 / 卡拉·迪瓦伊 / 克里夫·欧文|吕克·贝松|None</div><div class="line">纯洁心灵·逐梦演艺圈|2.0|朱哲健 / 李彦漫 / 陈思瀚|毕志飞|None</div><div class="line">建军大业||刘烨 / 朱亚文 / 黄志忠|刘伟强|None</div><div class="line">声之形 聲の形|6.9|入野自由 / 早见沙织 / 松冈茉优|山田尚子|None</div><div class="line">地球：神奇的一天 Earth: One Amazing Day|8.2|成龙 / 罗伯特·雷德福|理查德·戴尔|None</div><div class="line">奋斗|7.5|陈燕燕 / 郑君里 / 袁丛美|史东山|None</div><div class="line">谜证||苗侨伟 / 袁嘉敏 / 桑平|汪洋|None</div><div class="line">初恋时光||黄又南 / 邓紫衣 / 叶山豪|殷国君|None</div><div class="line">疯狂旅程||刘亮 / 白鸽 / 陆进|龙野|None</div><div class="line">十万个冷笑话2|7.7|山新 / 郝祥海 / 李姝洁|卢恒宇|None</div><div class="line">心理罪|5.4|廖凡 / 李易峰 / 万茜|谢东燊|None</div><div class="line">魔都爱之十二星座||李梓溪 / 孙立洋 / 马璐|唐昱|None</div><div class="line">请勿靠近||马可 / 李毓芬 / 郑雅文|张显|None</div><div class="line">三生三世十里桃花|4.0|刘亦菲 / 杨洋 / 罗晋|赵小丁|None</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/10604/" rel="next" title="系统性学习Moya+Alamofire+RxSwift+ObjectMapper的配合使用">
+                <i class="fa fa-chevron-left"></i> 系统性学习Moya+Alamofire+RxSwift+ObjectMapper的配合使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yOTYwNy82MTc1"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="王森" />
+          <p class="site-author-name" itemprop="name">王森</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ws1227" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/qq1176183741/home?wvr=5" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-获取标签属性"><span class="nav-number">1.</span> <span class="nav-text">1. 获取标签属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-获取标签内容"><span class="nav-number">2.</span> <span class="nav-text">2. 获取标签内容　　</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-第一个例子"><span class="nav-number">2.0.1.</span> <span class="nav-text">2.1 第一个例子</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-添加handle-data方法"><span class="nav-number">2.0.2.</span> <span class="nav-text">2.2 添加handle_data方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#2-2-1-解析需要的内容"><span class="nav-number">2.0.2.1.</span> <span class="nav-text">2.2.1 解析需要的内容</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-解析豆瓣热门电影实例"><span class="nav-number">2.1.</span> <span class="nav-text">2.3 解析豆瓣热门电影实例</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">王森</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("6CYvU02F3S8nOsPFJrrHiKGR-gzGzoHsz", "LWEI7xU093wgomlWkvtxF42I");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>
