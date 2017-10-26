@@ -1113,164 +1113,6 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/45195/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="王森">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王森博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/posts/45195/" itemprop="url">
-                  如何使用iOS 9的Core Spotlight框架
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-25T15:47:01+08:00">
-                2017-05-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Swift/" itemprop="url" rel="index">
-                    <span itemprop="name">Swift</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/posts/45195/" class="leancloud_visitors" data-flag-title="如何使用iOS 9的Core Spotlight框架">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>iOS每一次版本的更新，都会给全球的开发工作者带来新的“知识点”和对现有技术进行的改进。显然，iOS的最新版本iOS 9不仅延续了这一传统，还公布了新的框架和API，开发者可使用新增的框架和API让自己的应用表现的更出色。其中之一就是Core Spotlight框架，它包含了一些优秀的API，有待开发者深入探究。</p><br> <p>Core Spotlight (CS) 框架是Search API的一部分，它增加了开发者的应用的曝光率，使用户更容易发现和访问APP，但是这些API在iOS9之前的版本中是不可用的。这些Search API拉近了用户和app的距离，用户可以通过这种新的方法迅速的找到app,而app也可以迅速的对用户的操作做出反应。除了Core Spotlight之外，iOS 9还包含以下新的search功能（仅供参考）：</p><br> <p>1、NSUserActivity这个类中新的方法和属性（该类负责存储app关闭时的状态，以便之后恢复app的状态。）</p><br> <p>2、在设备上使用web标记，以便搜索到web中的内容。</p><br> <p>3、能通过web内容中的链接直接启动应用程序的通用链接。</p><br> <p>本文不会对以上三点做详细介绍，只详细讲解Core Spotlight框架。在讲解之前，先了解以下Core Spotlight到底是什么？</p><br> <p> <img src="http://img1.tuicool.com/Fzyymi.png!web" class="alignCenter" /> </p><br> <p> 如上图所示： <a href="https://developer.apple.com/library/ios/documentation/CoreSpotlight/Reference/CoreSpotlight_Framework/" target="_blank" rel="nofollow,noindex">Core Spotling框架</a> 可以让用户通过Spotlight搜索到app中的数据，并将app相关内容和系统搜索返回的结果一起展示出来。也就是说用户可以与应用程序的其他相关结果进行交互，当点击其中一项搜索结果时并不仅仅自动启动APP，开发者也可以让用户选择与数据最相关的内容。 </p><br> <p>从开发者的角度来说，集成Core Spotlight框架并使用它提供的API并不是一件难事。学过这教程之后，你将会发现仅仅需要几行代码就可以实现这个功能。集成的核心问题在于开发者必须把APP的数据以特定的格式加入到iOS系统的索引中。</p><br> <p>由于本教程专注于Core Spotlight框架的使用，所以我不打算深入研究这个框架。</p><br> <p>关于Demo App</p><br> <p>和往常一样，我们打算通过一个示例应用来研究探索Spotlight的细节。在这个demo中，我们将往应用程序中写入一组数据，并且这些数据都是可以通过真机或模拟器的Spotlight功能被搜索到的。虽然实现Spotlight功能搜索是重点,但是还是有必要介绍一下关于demo app 的更多细节。</p><br> <p>我们的示例应用要达到的效果是展示一些电影及其相关的信息，例如电影概要、导演、明星以及影评等级等。所有的电影数据将会放在列表中展示，并且当点击到对应的行时，所选择的电影会在一个新的视图控制器中展示出电影的详情。这些功能和数据作为我们挖掘Spotlight的API而言已经够用了。我们的数据来源是International Movie Database (IMDB)，我们从这个网站获得数据示例。</p><br> <p>通过看下面的动画示例，你可以先看一下演示程序的效果：</p><br> <p> <img src="http://img1.tuicool.com/mmy2uaE.gif" class="alignCenter" /> </p><br> <p>在本教程中，我们有两个目的：最重要的是让这个应用内的所有电影方面的数据都可以被Spotlight搜索到。当用户通过关键字搜索时，应用程序内关于电影的数据将会展现给用户。设置这些关键字是我们接下来工作的一部分，我们必须重新定义它们，使之符合规则。</p><br> <p>点击搜索结果会打开应用程序，之后我们要实现第二个目标。如果我们没有做任何的处理，那么将会加载包含有电影数据列表的默认视图控制器展示给用户。然而，假如我们考虑到用户体验的话，这么处理并不是很好。好的方案是，我们的APP应该展示Spotlight选中的电影的详情。简言之，我们不仅要让应用程序内的电影数据能够通过Spotlight被搜索到，而且还要在用户点击搜索结果时，展示关联的电影详情页。接下来的示例动画会讲解的更清楚：</p><br> <p> <img src="http://img2.tuicool.com/QfIBb23.gif" class="alignCenter" /> </p><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/posts/45195/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/59559/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1929,6 +1771,171 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/56109/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/posts/56109/" itemprop="url">
+                  OC中load方法和initialize方法的区别
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-10T18:53:03+08:00">
+                2017-05-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OC/" itemprop="url" rel="index">
+                    <span itemprop="name">OC</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/posts/56109/" class="leancloud_visitors" data-flag-title="OC中load方法和initialize方法的区别">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>OC中有两个特殊的类方法，分别是<code>load</code>和<code>initialize</code>。本文总结一下这两个方法的区别于联系、使用场景和注意事项。Demo可以在我的Github上找到——<a href="https://github.com/ws1227/MySampleCoe" target="_blank">load和initialize</a>，如果觉得有帮助还望点个star以示支持，总结在文章末尾。</p><br><h1>load</h1><br><p>顾名思义，<code>load</code>方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此<code>load</code>方法总是在<code>main</code>函数之前调用。</p><br><h3>调用规则</h3><br><p>如果一个类实现了<code>load</code>方法，在调用这个方法前会首先调用父类的<code>load</code>方法。而且这个过程是自动完成的，并不需要我们手动实现：<br><br><pre><code class="objc">// In Parent.m<br>+ (void)load {<br>    NSLog(@”Load Class Parent”);<br>}<br><br>// In Child.m，继承自Parent<br>+ (void)load {<br>    NSLog(@”Load Class Child”);<br>}<br><br>// In Child+load.m，Child类的分类<br>+ (void)load {<br>    NSLog(@”Load Class Child+load”);<br>}<br><br>// 运行结果：<br>/<em><br>    2016-02-01 21:28:14.379 load[11789:1435378] Load Class Parent<br>    2016-02-01 21:28:14.380 load[11789:1435378] Load Class Child<br>    2016-02-01 22:28:14.381 load[11789:1435378] Load Class Child+load
+</em>/</code></pre><br><br><p>如果一个类没有实现<code>load</code>方法，那么就不会调用它父类的<code>load</code>方法，这一点与正常的类继承和方法调用不一样，需要额外注意一下。</p><br><h3>执行顺序</h3><br><p><code>load</code>方法调用时，系统处于脆弱状态，如果调用别的类的方法，且该方法依赖于那个类的<code>load</code>方法进行初始化设置，那么必须确保那个类的<code>load</code>方法已经调用了，比如demo中的这段代码，打印出的字符串就为<code>null</code>：</p>
+
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// In Child.m</div><div class="line">+ (void)load &#123;</div><div class="line">    NSLog(@&quot;Load Class Child&quot;);</div><div class="line"></div><div class="line">    Other *other = [Other new];</div><div class="line">    [other originalFunc];</div><div class="line">   </div><div class="line">    // 如果不先调用other的load，下面这行代码就无效，打印出null</div><div class="line">    [Other printName];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>load</code>方法的调用顺序其实有迹可循，我们看到demo的项目设置如下：</p><br><div class="image-package"><br><img src="http://upload-images.jianshu.io/upload_images/1171077-417e6180d36303a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/1171077-417e6180d36303a6.png?imageMogr2/auto-orient/strip%7CimageView2/2"><br><div class="image-caption">执行顺序</div><br></div><br><p>在Compile Sources中，文件的排放顺序就是其装载顺序，自然也就是<code>load</code>方法调用的顺序。这一点也证明了<code>load</code>方法中会自动调用父类的方法，因为在demo的输出结果中，<code>Parent</code>的<code>load</code>方法先于<code>Child</code>调用，而它的装载顺序其实在<code>Child</code>之后。</p><br><p>虽然在这种简单情况下我们可以辨别出各个类的<code>load</code>方法调用的顺序，但<strong>永远不要</strong>依赖这个顺序完成你的代码逻辑。一方面，这在后期的开发中极容易导致错误，另一方面，你实际上并不需要这么做。</p><br><h3>使用场景</h3><br><p>由于调用<code>load</code>方法时的环境很不安全，我们应该尽量减少<code>load</code>方法的逻辑。另一个原因是<code>load</code>方法是线程安全的，它内部使用了锁，所以我们应该避免线程阻塞在<code>load</code>方法中。</p><br><p>一个常见的使用场景是在<code>load</code>方法中实现Method Swizzle：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// In Other.m</div><div class="line">+ (void)load &#123;</div><div class="line">    Method originalFunc = class_getInstanceMethod([self class], @selector(originalFunc));</div><div class="line">    Method swizzledFunc = class_getInstanceMethod([self class], @selector(swizzledFunc));</div><div class="line"></div><div class="line">    method_exchangeImplementations(originalFunc, swizzledFunc);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/posts/56109/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
   </section>
 
   
@@ -1978,7 +1985,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">19</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
