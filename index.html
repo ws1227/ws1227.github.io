@@ -324,6 +324,164 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/10477/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/posts/10477/" itemprop="url">
+                  iOS属性修饰符用copy、strong修饰的终极解释
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-01T16:04:50+08:00">
+                2017-11-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/posts/10477/" class="leancloud_visitors" data-flag-title="iOS属性修饰符用copy、strong修饰的终极解释">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>   Copy，Strong的区别需要了解点内存管理的知识，Strong是ARC下引入的修饰，相当于手动管理内存(MRC)下的retain，在相关代码下，常常看到有的人用copy修饰NSString,NSArray,NSDictionary..等存在可变与不可变之分的对象，常常会用copy，而不是strong,下面代码来解释一下strong与copy的区别:<br>先说明一下什么叫做浅拷贝，什么叫做深拷贝;<br><strong>浅Copy</strong>：可以理解为指针的复制，只是多了一个指向这块内存的指针，共用一块内存。<br><strong>深Copy</strong>:理解为内存的复制，两块内存是完全不同的，也就是两个对象指针分别指向不同的内存，互不干涉。<br>首先在类延展中声明两个属性变量<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>)<span class="built_in">NSString</span> * stringStrong;   <span class="comment">//strong修饰的字符串对象  </span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>)<span class="built_in">NSString</span> * stringCopy;       <span class="comment">//copy修饰的字符串对象</span></div></pre></td></tr></table></figure></p>
+<p>接着创建两个不可变字符串(NSString)<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSString对象  </span></div><div class="line"><span class="built_in">NSString</span> * strong1 = <span class="string">@"I am Strong!"</span>;  </div><div class="line"><span class="built_in">NSString</span> * copy1 = <span class="string">@"I am Copy!"</span>;</div></pre></td></tr></table></figure></p>
+<p>将两个属性分别进行赋值<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//初始化两个字符串  </span></div><div class="line"><span class="keyword">self</span>.stringStrong = strong1;  </div><div class="line"><span class="keyword">self</span>.stringCopy = copy1;</div></pre></td></tr></table></figure></p>
+<p>分别打印一下四个变量的内存地址:<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"strong1 = %p"</span>,strong1);  </div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"stringStrong = %p"</span>,<span class="keyword">self</span>.stringStrong);  </div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"copy1 = %p"</span>,copy1);  </div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"stringCopy = %p"</span>,<span class="keyword">self</span>.stringCopy);</div></pre></td></tr></table></figure></p>
+<p>结果如下:可以看出，此时无论是strong修饰的字符串还是copy修饰的字符串，都进行了浅Copy.</p>
+<blockquote>
+<p>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] strong1 = 0x10a0b3078<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] stringStrong = 0x10a0b3078<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] copy1 = 0x10a0b3098<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] stringCopy = 0x10a0b3098 </p>
+</blockquote>
+<p>如果创建两个不可变字符串对象(NSMutableString)呢</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSMutableString对象  </span></div><div class="line"><span class="built_in">NSMutableString</span> * mutableStrong = [<span class="built_in">NSMutableString</span> stringWithString:<span class="string">@"StrongMutable"</span>];  </div><div class="line"><span class="built_in">NSMutableString</span> * mutableCopy = [<span class="built_in">NSMutableString</span> stringWithString:<span class="string">@"CopyMutable"</span>];</div></pre></td></tr></table></figure>
+<p>分别对属性再次进行赋值<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">self</span>.stringStrong = mutableStrong;  </div><div class="line"><span class="keyword">self</span>.stringCopy = mutableCopy;</div></pre></td></tr></table></figure></p>
+<p>分别打印一下四个变量的地址:结果如下:这时就发现了,用strong修饰的字符串依旧进行了浅Copy,而由copy修饰的字符串进行了深Copy,所以mutableStrong与stringStrong指向了同一块内存，而mutableCopy和stringCopy指向的是完全两块不同的内存。</p>
+<blockquote>
+<p>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] mutableStrong = 0x7fccba425d60<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] stringStrong = 0x7fccba425d60<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] mutableCopy = 0x7fccba40d7c0<br>2016-02-29 18:59:06.333 StrongOrCopy[5046:421886] stringCopy = 0x7fccba4149e0  </p>
+</blockquote>
+<p>那么有什么用呢，实例来看一下有什么区别:<br>首先是对不可变字符串进行操作:<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSString对象  </span></div><div class="line"><span class="built_in">NSString</span> * strong1 = <span class="string">@"I am Strong!"</span>;  </div><div class="line"><span class="built_in">NSString</span> * copy1 = <span class="string">@"I am Copy!"</span>;  </div><div class="line">  </div><div class="line"><span class="comment">//初始化两个字符串  </span></div><div class="line"><span class="keyword">self</span>.stringStrong = strong1;  </div><div class="line"><span class="keyword">self</span>.stringCopy = copy1;  </div><div class="line">  </div><div class="line"><span class="comment">//两个NSString进行操作  </span></div><div class="line">[strong1 stringByAppendingString:<span class="string">@"11111"</span>];  </div><div class="line">[copy1 stringByAppendingString:<span class="string">@"22222"</span>];</div></pre></td></tr></table></figure></p>
+<p>分别对在字符串后面进行拼接，当然这个拼接对原字符串没有任何的影响，因为不可变自字符串调用的方法都是有返回值的，原来的值是不会发生变化的.打印如下，对结果没有任何的影响:</p>
+<blockquote>
+<p>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] strong1 = I am Strong!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] stringStrong = I am Strong!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] copy1 = I am Copy!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] stringCopy = I am Copy!</p>
+</blockquote>
+<p>然后是对可变字符串进行操作:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSMutableString对象  </span></div><div class="line"><span class="built_in">NSMutableString</span> * mutableStrong = [<span class="built_in">NSMutableString</span> stringWithString:<span class="string">@"StrongMutable"</span>];  </div><div class="line"><span class="built_in">NSMutableString</span> * mutableCopy = [<span class="built_in">NSMutableString</span> stringWithString:<span class="string">@"CopyMutable"</span>];  </div><div class="line">  </div><div class="line"><span class="comment">//初始化两个字符串  </span></div><div class="line"><span class="keyword">self</span>.stringStrong = mutableStrong;  </div><div class="line"><span class="keyword">self</span>.stringCopy = mutableCopy;  </div><div class="line">  </div><div class="line"><span class="comment">//两个MutableString进行操作  </span></div><div class="line">[mutableStrong appendString:<span class="string">@"Strong!"</span>];  </div><div class="line">[mutableCopy appendString:<span class="string">@"Copy!"</span>];</div></pre></td></tr></table></figure>
+<p>  再来看一下结果:对mutableStrong进行的操作，由于用strong修饰的stringStrong没有进行深Copy，导致共用了一块内存，当mutableStrong对内存进行了操作的时候，实际上对stringStrong也进行了操作;   相反，用copy修饰的stringCopy进行了深Copy，也就是说stringCopy与mutableCopy用了两块完全不同的内存，所以不管mutableCopy进行了怎么样的变化，原来的stringCopy都不会发生变化.这就在日常中避免了出现一些不可预计的错误。</p>
+<blockquote>
+<p>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] stringStrong = StrongMutableStrong!<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] mutableStrong = StrongMutableStrong!<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] stringCopy = CopyMutable<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] mutableCopy = CopyMutableCopy!  </p>
+</blockquote>
+<p>   这样看来，在不可变对象之间进行转换，strong与copy作用是一样的，但是如果在不可变与可变之间进行操作，那么楼主比较推荐copy,这也就是为什么很多地方用copy，而不是strong修饰NSString,NSArray等存在可变不可变之分的类对象了，避免出现意外的数据操作.</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/28111/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1771,171 +1929,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/56109/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="王森">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王森博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/posts/56109/" itemprop="url">
-                  OC中load方法和initialize方法的区别
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-10T18:53:03+08:00">
-                2017-05-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/OC/" itemprop="url" rel="index">
-                    <span itemprop="name">OC</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/posts/56109/" class="leancloud_visitors" data-flag-title="OC中load方法和initialize方法的区别">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>OC中有两个特殊的类方法，分别是<code>load</code>和<code>initialize</code>。本文总结一下这两个方法的区别于联系、使用场景和注意事项。Demo可以在我的Github上找到——<a href="https://github.com/ws1227/MySampleCoe" target="_blank">load和initialize</a>，如果觉得有帮助还望点个star以示支持，总结在文章末尾。</p><br><h1>load</h1><br><p>顾名思义，<code>load</code>方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此<code>load</code>方法总是在<code>main</code>函数之前调用。</p><br><h3>调用规则</h3><br><p>如果一个类实现了<code>load</code>方法，在调用这个方法前会首先调用父类的<code>load</code>方法。而且这个过程是自动完成的，并不需要我们手动实现：<br><br><pre><code class="objc">// In Parent.m<br>+ (void)load {<br>    NSLog(@”Load Class Parent”);<br>}<br><br>// In Child.m，继承自Parent<br>+ (void)load {<br>    NSLog(@”Load Class Child”);<br>}<br><br>// In Child+load.m，Child类的分类<br>+ (void)load {<br>    NSLog(@”Load Class Child+load”);<br>}<br><br>// 运行结果：<br>/<em><br>    2016-02-01 21:28:14.379 load[11789:1435378] Load Class Parent<br>    2016-02-01 21:28:14.380 load[11789:1435378] Load Class Child<br>    2016-02-01 22:28:14.381 load[11789:1435378] Load Class Child+load
-</em>/</code></pre><br><br><p>如果一个类没有实现<code>load</code>方法，那么就不会调用它父类的<code>load</code>方法，这一点与正常的类继承和方法调用不一样，需要额外注意一下。</p><br><h3>执行顺序</h3><br><p><code>load</code>方法调用时，系统处于脆弱状态，如果调用别的类的方法，且该方法依赖于那个类的<code>load</code>方法进行初始化设置，那么必须确保那个类的<code>load</code>方法已经调用了，比如demo中的这段代码，打印出的字符串就为<code>null</code>：</p>
-
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// In Child.m</div><div class="line">+ (void)load &#123;</div><div class="line">    NSLog(@&quot;Load Class Child&quot;);</div><div class="line"></div><div class="line">    Other *other = [Other new];</div><div class="line">    [other originalFunc];</div><div class="line">   </div><div class="line">    // 如果不先调用other的load，下面这行代码就无效，打印出null</div><div class="line">    [Other printName];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><code>load</code>方法的调用顺序其实有迹可循，我们看到demo的项目设置如下：</p><br><div class="image-package"><br><img src="http://upload-images.jianshu.io/upload_images/1171077-417e6180d36303a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" data-original-src="http://upload-images.jianshu.io/upload_images/1171077-417e6180d36303a6.png?imageMogr2/auto-orient/strip%7CimageView2/2"><br><div class="image-caption">执行顺序</div><br></div><br><p>在Compile Sources中，文件的排放顺序就是其装载顺序，自然也就是<code>load</code>方法调用的顺序。这一点也证明了<code>load</code>方法中会自动调用父类的方法，因为在demo的输出结果中，<code>Parent</code>的<code>load</code>方法先于<code>Child</code>调用，而它的装载顺序其实在<code>Child</code>之后。</p><br><p>虽然在这种简单情况下我们可以辨别出各个类的<code>load</code>方法调用的顺序，但<strong>永远不要</strong>依赖这个顺序完成你的代码逻辑。一方面，这在后期的开发中极容易导致错误，另一方面，你实际上并不需要这么做。</p><br><h3>使用场景</h3><br><p>由于调用<code>load</code>方法时的环境很不安全，我们应该尽量减少<code>load</code>方法的逻辑。另一个原因是<code>load</code>方法是线程安全的，它内部使用了锁，所以我们应该避免线程阻塞在<code>load</code>方法中。</p><br><p>一个常见的使用场景是在<code>load</code>方法中实现Method Swizzle：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// In Other.m</div><div class="line">+ (void)load &#123;</div><div class="line">    Method originalFunc = class_getInstanceMethod([self class], @selector(originalFunc));</div><div class="line">    Method swizzledFunc = class_getInstanceMethod([self class], @selector(swizzledFunc));</div><div class="line"></div><div class="line">    method_exchangeImplementations(originalFunc, swizzledFunc);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/posts/56109/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1985,7 +1978,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2007,7 +2000,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
