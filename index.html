@@ -439,6 +439,7 @@
 <p>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] stringStrong = StrongMutableStrong!<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] mutableStrong = StrongMutableStrong!<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] stringCopy = CopyMutable<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] mutableCopy = CopyMutableCopy!  </p>
 </blockquote>
 <p>   这样看来，在不可变对象之间进行转换，strong与copy作用是一样的，但是如果在不可变与可变之间进行操作，那么楼主比较推荐copy,这也就是为什么很多地方用copy，而不是strong修饰NSString,NSArray等存在可变不可变之分的类对象了，避免出现意外的数据操作.</p>
+<p>参考自<br><a href="http://blog.csdn.net/itianyi/article/details/9018567" target="_blank" rel="external">NSString什么时候用copy，什么时候用strong</a><br><a href="http://blog.csdn.net/runintolove/article/details/50767523" target="_blank" rel="external">属性用copy、strong修饰的区别</a></p>
 
           
         
