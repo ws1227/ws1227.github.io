@@ -324,6 +324,149 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/30847/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/posts/30847/" itemprop="url">
+                  Python装饰器的简单理解
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-02T15:46:32+08:00">
+                2017-11-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/posts/30847/" class="leancloud_visitors" data-flag-title="Python装饰器的简单理解">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>装饰器可以不改变被装饰函数内容的情况下给函数本身增加一些代码，如下边例子 w1函数是一个闭包这里就是一个装饰函数，为了验证f1函数是否需要被执行 就作为函数innerfunc的参数传入w1 ，执行innerfunc()调用inner函数 验证通过则执行函数func()即 f1()</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">def w1(func):</div><div class="line">    def inner():</div><div class="line">        print(<span class="string">"验证权限"</span>)</div><div class="line">        <span class="keyword">if</span> True:</div><div class="line">            func()</div><div class="line">    <span class="keyword">return</span> inner</div><div class="line">    </div><div class="line">def f1():</div><div class="line">    print(<span class="string">"----f1----"</span>)</div><div class="line"></div><div class="line">def f2():</div><div class="line">    print(<span class="string">"f2"</span>)</div><div class="line"></div><div class="line">innerfunc = w1(f1)</div><div class="line"></div><div class="line">innerfunc()</div></pre></td></tr></table></figure>
+<p>然后看懂了这个例子就改为装饰器的写法</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">def w1(func):</div><div class="line">    def inner():</div><div class="line">        print(<span class="string">"验证权限"</span>)</div><div class="line">        <span class="keyword">if</span> True:</div><div class="line">            func()</div><div class="line">    <span class="keyword">return</span> inner</div><div class="line"></div><div class="line"></div><div class="line">@w1  <span class="meta"># @w1 =  w1(f1)</span></div><div class="line">def f1():</div><div class="line">    print(<span class="string">"----f1----"</span>)</div><div class="line"></div><div class="line">@w1</div><div class="line">def f2():</div><div class="line">    print(<span class="string">"----f2----"</span>)</div><div class="line"></div><div class="line">f1()</div><div class="line">f2()</div></pre></td></tr></table></figure>
+<p>打印</p>
+<blockquote>
+<p>验证权限 —-f1—-<br>  验证权限  —-f2—-</p>
+</blockquote>
+<p>上边可以看出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">之前的innerfunc = w1(f1)就换成了 @w1写在f1函数体上边 即为完整的装饰器</div></pre></td></tr></table></figure>
+<p>这样就实现了不改变f1 或者f2的代码的情况下 给函数增加了其他方法 之类的装饰器比较简单就是 <strong>if True:</strong> 验证通过即执行函数</p>
+<p>可以参考<a href="http://python.jobbole.com/82344/" target="_blank" rel="external">http://python.jobbole.com/82344/</a></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/10477/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -411,8 +554,7 @@
 
       
         
-          
-            <p>   Copy，Strong的区别需要了解点内存管理的知识，Strong是ARC下引入的修饰，相当于手动管理内存(MRC)下的retain，在相关代码下，常常看到有的人用copy修饰NSString,NSArray,NSDictionary..等存在可变与不可变之分的对象，常常会用copy，而不是strong,下面代码来解释一下strong与copy的区别:<br>先说明一下什么叫做浅拷贝，什么叫做深拷贝;<br><strong>浅Copy</strong>：可以理解为指针的复制，只是多了一个指向这块内存的指针，共用一块内存。<br><strong>深Copy</strong>:理解为内存的复制，两块内存是完全不同的，也就是两个对象指针分别指向不同的内存，互不干涉。<br>首先在类延展中声明两个属性变量<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>)<span class="built_in">NSString</span> * stringStrong;   <span class="comment">//strong修饰的字符串对象  </span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>)<span class="built_in">NSString</span> * stringCopy;       <span class="comment">//copy修饰的字符串对象</span></div></pre></td></tr></table></figure></p>
+          <p>   Copy，Strong的区别需要了解点内存管理的知识，Strong是ARC下引入的修饰，相当于手动管理内存(MRC)下的retain，在相关代码下，常常看到有的人用copy修饰NSString,NSArray,NSDictionary..等存在可变与不可变之分的对象，常常会用copy，而不是strong,下面代码来解释一下strong与copy的区别:<br>先说明一下什么叫做浅拷贝，什么叫做深拷贝;<br><strong>浅Copy</strong>：可以理解为指针的复制，只是多了一个指向这块内存的指针，共用一块内存。<br><strong>深Copy</strong>:理解为内存的复制，两块内存是完全不同的，也就是两个对象指针分别指向不同的内存，互不干涉。<br>首先在类延展中声明两个属性变量<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>)<span class="built_in">NSString</span> * stringStrong;   <span class="comment">//strong修饰的字符串对象  </span></div><div class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">copy</span>)<span class="built_in">NSString</span> * stringCopy;       <span class="comment">//copy修饰的字符串对象</span></div></pre></td></tr></table></figure></p>
 <p>接着创建两个不可变字符串(NSString)<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSString对象  </span></div><div class="line"><span class="built_in">NSString</span> * strong1 = <span class="string">@"I am Strong!"</span>;  </div><div class="line"><span class="built_in">NSString</span> * copy1 = <span class="string">@"I am Copy!"</span>;</div></pre></td></tr></table></figure></p>
 <p>将两个属性分别进行赋值<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//初始化两个字符串  </span></div><div class="line"><span class="keyword">self</span>.stringStrong = strong1;  </div><div class="line"><span class="keyword">self</span>.stringCopy = copy1;</div></pre></td></tr></table></figure></p>
 <p>分别打印一下四个变量的内存地址:<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"strong1 = %p"</span>,strong1);  </div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"stringStrong = %p"</span>,<span class="keyword">self</span>.stringStrong);  </div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"copy1 = %p"</span>,copy1);  </div><div class="line"><span class="built_in">NSLog</span>(<span class="string">@"stringCopy = %p"</span>,<span class="keyword">self</span>.stringCopy);</div></pre></td></tr></table></figure></p>
@@ -427,21 +569,14 @@
 <blockquote>
 <p>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] mutableStrong = 0x7fccba425d60<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] stringStrong = 0x7fccba425d60<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] mutableCopy = 0x7fccba40d7c0<br>2016-02-29 18:59:06.333 StrongOrCopy[5046:421886] stringCopy = 0x7fccba4149e0  </p>
 </blockquote>
-<p>那么有什么用呢，实例来看一下有什么区别:<br>首先是对不可变字符串进行操作:<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSString对象  </span></div><div class="line"><span class="built_in">NSString</span> * strong1 = <span class="string">@"I am Strong!"</span>;  </div><div class="line"><span class="built_in">NSString</span> * copy1 = <span class="string">@"I am Copy!"</span>;  </div><div class="line">  </div><div class="line"><span class="comment">//初始化两个字符串  </span></div><div class="line"><span class="keyword">self</span>.stringStrong = strong1;  </div><div class="line"><span class="keyword">self</span>.stringCopy = copy1;  </div><div class="line">  </div><div class="line"><span class="comment">//两个NSString进行操作  </span></div><div class="line">[strong1 stringByAppendingString:<span class="string">@"11111"</span>];  </div><div class="line">[copy1 stringByAppendingString:<span class="string">@"22222"</span>];</div></pre></td></tr></table></figure></p>
-<p>分别对在字符串后面进行拼接，当然这个拼接对原字符串没有任何的影响，因为不可变自字符串调用的方法都是有返回值的，原来的值是不会发生变化的.打印如下，对结果没有任何的影响:</p>
-<blockquote>
-<p>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] strong1 = I am Strong!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] stringStrong = I am Strong!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] copy1 = I am Copy!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] stringCopy = I am Copy!</p>
-</blockquote>
-<p>然后是对可变字符串进行操作:</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSMutableString对象  </span></div><div class="line"><span class="built_in">NSMutableString</span> * mutableStrong = [<span class="built_in">NSMutableString</span> stringWithString:<span class="string">@"StrongMutable"</span>];  </div><div class="line"><span class="built_in">NSMutableString</span> * mutableCopy = [<span class="built_in">NSMutableString</span> stringWithString:<span class="string">@"CopyMutable"</span>];  </div><div class="line">  </div><div class="line"><span class="comment">//初始化两个字符串  </span></div><div class="line"><span class="keyword">self</span>.stringStrong = mutableStrong;  </div><div class="line"><span class="keyword">self</span>.stringCopy = mutableCopy;  </div><div class="line">  </div><div class="line"><span class="comment">//两个MutableString进行操作  </span></div><div class="line">[mutableStrong appendString:<span class="string">@"Strong!"</span>];  </div><div class="line">[mutableCopy appendString:<span class="string">@"Copy!"</span>];</div></pre></td></tr></table></figure>
-<p>  再来看一下结果:对mutableStrong进行的操作，由于用strong修饰的stringStrong没有进行深Copy，导致共用了一块内存，当mutableStrong对内存进行了操作的时候，实际上对stringStrong也进行了操作;   相反，用copy修饰的stringCopy进行了深Copy，也就是说stringCopy与mutableCopy用了两块完全不同的内存，所以不管mutableCopy进行了怎么样的变化，原来的stringCopy都不会发生变化.这就在日常中避免了出现一些不可预计的错误。</p>
-<blockquote>
-<p>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] stringStrong = StrongMutableStrong!<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] mutableStrong = StrongMutableStrong!<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] stringCopy = CopyMutable<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] mutableCopy = CopyMutableCopy!  </p>
-</blockquote>
-<p>   这样看来，在不可变对象之间进行转换，strong与copy作用是一样的，但是如果在不可变与可变之间进行操作，那么楼主比较推荐copy,这也就是为什么很多地方用copy，而不是strong修饰NSString,NSArray等存在可变不可变之分的类对象了，避免出现意外的数据操作.</p>
-<p>参考自<br><a href="http://blog.csdn.net/itianyi/article/details/9018567" target="_blank" rel="external">NSString什么时候用copy，什么时候用strong</a><br><a href="http://blog.csdn.net/runintolove/article/details/50767523" target="_blank" rel="external">属性用copy、strong修饰的区别</a></p>
-
-          
+<p>那么有什么用呢，实例来看一下有什么区别:<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/posts/10477/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1767,174 +1902,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/28457/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="王森">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王森博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/posts/28457/" itemprop="url">
-                  Swift使用OC框架
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T11:18:04+08:00">
-                2017-05-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Swift/" itemprop="url" rel="index">
-                    <span itemprop="name">Swift</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/posts/28457/" class="leancloud_visitors" data-flag-title="Swift使用OC框架">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Swift使用OC框架</p>
-<h4 id="场景一：使用Cocopods导入框架"><a href="#场景一：使用Cocopods导入框架" class="headerlink" title="场景一：使用Cocopods导入框架"></a>场景一：使用Cocopods导入框架</h4><p>看以前的教程用Cocopods导入框架也要手动设置桥接文件，我最近创建的项目用Cocopods安装的<code>SDWebImage</code>和<code>SVProgressHUD</code>发现xcode会自动生成一个桥接的.h文件名字是<code>Targets-Bridging-Header.h</code>,并且会自动设置路径如图，这个稍后在场景2再继续介绍<br><img src="http://upload-images.jianshu.io/upload_images/1177260-81dbb05fa1c972fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"></p>
-<p>用Cocopods导入的OC框架Xcode会自动生成一个文件但是我并不能在本地找到他，看SDWebImage的这个文件如下<br><a href="http://photozou.jp/photo/show/3167534/247718546" target="_blank" rel="external"><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718546.v1494470486.jpg" alt="SDWebImage" width="450" height="279"></a><br><br>在使用的过程中直接用<code>import SDWebImage</code>就可以使用<code> SDWebImage</code>的各种方法了<br>这种由Cocopods导入的框架都会生成这个类似的文件不用在桥接文件有引入头文件类似<code>#import “UIImageView+WebCache.h”</code>.</p>
-<h4 id="场景二：没有使用Cocopods或者使用Cocopods手动导入框架"><a href="#场景二：没有使用Cocopods或者使用Cocopods手动导入框架" class="headerlink" title="场景二：没有使用Cocopods或者使用Cocopods手动导入框架"></a>场景二：没有使用Cocopods或者使用Cocopods手动导入框架</h4><p>没有使用Cocopods就需要自己新建一个桥接文件了当然如果用了Cocopods可以使用Xcode自动生成的就是场景一的那种情况了,下图新建一个桥接文件命名随意这里的图是用别人的真是随意了啊，我建议命名规则可以按照<code>Targets-Bridging-Header.h</code>毕竟这样看起来正规点嘛<br><img src="http://upload-images.jianshu.io/upload_images/1177260-f4d50e12169a4794.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br>填好文件名字,选中语言为Objective-C,点击Next</p>
-<p>这个时候回出现一个弹框,意思就是 你是否想要配置一个OC桥接文件,选择创建<br><img src="http://upload-images.jianshu.io/upload_images/1177260-9cd0d85912e6e2d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description">，路径可以按照场景一的图找到就不再上图了。这里强调一个重要设置<br><br>注意、注意、注意<br><br>重要的事情说三遍嘛<br><br>1.选择target（就是左边你的工程target）—— BuildSettings —— search Paths 下的 User Header Search Paths</p>
-<p>2.双击后面的空白区域，并且点击“+”号添加一项：并且输入：“$(PODS_ROOT)”（没有引号），选择：recursive（会在相应的目录递归搜索文件）。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1177260-a0874a70ce8d4722.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br><br><img src="http://upload-images.jianshu.io/upload_images/1177260-f069f467c1d2d028.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br><br>这个设置完才可以保证在桥接文件里能够正常引用OC库</p>
-<p>一切设置妥当就可以手动拖入OC库了，举个例子我用的<code>Toast</code></p>
-<p><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718829.v1494471880.jpg" alt="王森博客，Swift使用OC框架" width="450" height="218"><br></p>
-<p><a href="http://photozou.jp/photo/show/3167534/247718892" target="_blank" rel="external"><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718892.v1494472099.jpg" alt="10C510A6-B0F0-4E48-B87C-5376FC98A58D" width="450" height="194"></a><br><br>愉快使用OC和Swift的混编吧</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1979,7 +1951,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -95,7 +95,7 @@
 <meta property="og:url" content="blog.51zan.cc/posts/10477/index.html">
 <meta property="og:site_name" content="王森博客">
 <meta property="og:description" content="Copy，Strong的区别需要了解点内存管理的知识，Strong是ARC下引入的修饰，相当于手动管理内存(MRC)下的retain，在相关代码下，常常看到有的人用copy修饰NSString,NSArray,NSDictionary..等存在可变与不可变之分的对象，常常会用copy，而不是strong,下面代码来解释一下strong与copy的区别:先说明一下什么叫做浅拷贝，什么叫做深拷贝">
-<meta property="og:updated_time" content="2017-11-01T08:15:55.000Z">
+<meta property="og:updated_time" content="2017-11-01T08:18:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS属性修饰符用copy、strong修饰的终极解释">
 <meta name="twitter:description" content="Copy，Strong的区别需要了解点内存管理的知识，Strong是ARC下引入的修饰，相当于手动管理内存(MRC)下的retain，在相关代码下，常常看到有的人用copy修饰NSString,NSArray,NSDictionary..等存在可变与不可变之分的对象，常常会用copy，而不是strong,下面代码来解释一下strong与copy的区别:先说明一下什么叫做浅拷贝，什么叫做深拷贝">
@@ -421,7 +421,7 @@
 <blockquote>
 <p>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] mutableStrong = 0x7fccba425d60<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] stringStrong = 0x7fccba425d60<br>2016-02-29 18:59:06.332 StrongOrCopy[5046:421886] mutableCopy = 0x7fccba40d7c0<br>2016-02-29 18:59:06.333 StrongOrCopy[5046:421886] stringCopy = 0x7fccba4149e0  </p>
 </blockquote>
-<p>那么有什么用呢，实例来看一下有什么区别:<br>首先是对不可变字符串进行操作:<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSString对象  </span></div><div class="line"><span class="built_in">NSString</span> * strong1 = <span class="string">@"I am Strong!"</span>;  </div><div class="line"><span class="built_in">NSString</span> * copy1 = <span class="string">@"I am Copy!"</span>;  </div><div class="line">  </div><div class="line"><span class="comment">//初始化两个字符串  </span></div><div class="line"><span class="keyword">self</span>.stringStrong = strong1;  </div><div class="line"><span class="keyword">self</span>.stringCopy = copy1;  </div><div class="line">  </div><div class="line"><span class="comment">//两个NSString进行操作  </span></div><div class="line">[strong1 stringByAppendingString:<span class="string">@"11111"</span>];  </div><div class="line">[copy1 stringByAppendingString:<span class="string">@"22222"</span>];</div></pre></td></tr></table></figure></p>
+<p>那么有什么用呢，实例来看一下有什么区别:<br><a id="more"></a><br>首先是对不可变字符串进行操作:<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//新创建两个NSString对象  </span></div><div class="line"><span class="built_in">NSString</span> * strong1 = <span class="string">@"I am Strong!"</span>;  </div><div class="line"><span class="built_in">NSString</span> * copy1 = <span class="string">@"I am Copy!"</span>;  </div><div class="line">  </div><div class="line"><span class="comment">//初始化两个字符串  </span></div><div class="line"><span class="keyword">self</span>.stringStrong = strong1;  </div><div class="line"><span class="keyword">self</span>.stringCopy = copy1;  </div><div class="line">  </div><div class="line"><span class="comment">//两个NSString进行操作  </span></div><div class="line">[strong1 stringByAppendingString:<span class="string">@"11111"</span>];  </div><div class="line">[copy1 stringByAppendingString:<span class="string">@"22222"</span>];</div></pre></td></tr></table></figure></p>
 <p>分别对在字符串后面进行拼接，当然这个拼接对原字符串没有任何的影响，因为不可变自字符串调用的方法都是有返回值的，原来的值是不会发生变化的.打印如下，对结果没有任何的影响:</p>
 <blockquote>
 <p>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] strong1 = I am Strong!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] stringStrong = I am Strong!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] copy1 = I am Copy!<br>2016-02-29 19:15:26.729 StrongOrCopy[5146:439360] stringCopy = I am Copy!</p>
@@ -479,6 +479,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/posts/30847/" rel="prev" title="Python装饰器的简单理解">
+                Python装饰器的简单理解 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -566,7 +570,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

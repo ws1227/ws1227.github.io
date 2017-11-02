@@ -324,6 +324,169 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/28457/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/posts/28457/" itemprop="url">
+                  Swift使用OC框架
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T11:18:04+08:00">
+                2017-05-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Swift/" itemprop="url" rel="index">
+                    <span itemprop="name">Swift</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/posts/28457/" class="leancloud_visitors" data-flag-title="Swift使用OC框架">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Swift使用OC框架</p>
+<h4 id="场景一：使用Cocopods导入框架"><a href="#场景一：使用Cocopods导入框架" class="headerlink" title="场景一：使用Cocopods导入框架"></a>场景一：使用Cocopods导入框架</h4><p>看以前的教程用Cocopods导入框架也要手动设置桥接文件，我最近创建的项目用Cocopods安装的<code>SDWebImage</code>和<code>SVProgressHUD</code>发现xcode会自动生成一个桥接的.h文件名字是<code>Targets-Bridging-Header.h</code>,并且会自动设置路径如图，这个稍后在场景2再继续介绍<br><img src="http://upload-images.jianshu.io/upload_images/1177260-81dbb05fa1c972fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"></p>
+<p>用Cocopods导入的OC框架Xcode会自动生成一个文件但是我并不能在本地找到他，看SDWebImage的这个文件如下<br><a href="http://photozou.jp/photo/show/3167534/247718546" target="_blank" rel="external"><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718546.v1494470486.jpg" alt="SDWebImage" width="450" height="279"></a><br><br>在使用的过程中直接用<code>import SDWebImage</code>就可以使用<code> SDWebImage</code>的各种方法了<br>这种由Cocopods导入的框架都会生成这个类似的文件不用在桥接文件有引入头文件类似<code>#import “UIImageView+WebCache.h”</code>.</p>
+<h4 id="场景二：没有使用Cocopods或者使用Cocopods手动导入框架"><a href="#场景二：没有使用Cocopods或者使用Cocopods手动导入框架" class="headerlink" title="场景二：没有使用Cocopods或者使用Cocopods手动导入框架"></a>场景二：没有使用Cocopods或者使用Cocopods手动导入框架</h4><p>没有使用Cocopods就需要自己新建一个桥接文件了当然如果用了Cocopods可以使用Xcode自动生成的就是场景一的那种情况了,下图新建一个桥接文件命名随意这里的图是用别人的真是随意了啊，我建议命名规则可以按照<code>Targets-Bridging-Header.h</code>毕竟这样看起来正规点嘛<br><img src="http://upload-images.jianshu.io/upload_images/1177260-f4d50e12169a4794.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br>填好文件名字,选中语言为Objective-C,点击Next</p>
+<p>这个时候回出现一个弹框,意思就是 你是否想要配置一个OC桥接文件,选择创建<br><img src="http://upload-images.jianshu.io/upload_images/1177260-9cd0d85912e6e2d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description">，路径可以按照场景一的图找到就不再上图了。这里强调一个重要设置<br><br>注意、注意、注意<br><br>重要的事情说三遍嘛<br><br>1.选择target（就是左边你的工程target）—— BuildSettings —— search Paths 下的 User Header Search Paths</p>
+<p>2.双击后面的空白区域，并且点击“+”号添加一项：并且输入：“$(PODS_ROOT)”（没有引号），选择：recursive（会在相应的目录递归搜索文件）。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1177260-a0874a70ce8d4722.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br><br><img src="http://upload-images.jianshu.io/upload_images/1177260-f069f467c1d2d028.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br><br>这个设置完才可以保证在桥接文件里能够正常引用OC库</p>
+<p>一切设置妥当就可以手动拖入OC库了，举个例子我用的<code>Toast</code></p>
+<p><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718829.v1494471880.jpg" alt="王森博客，Swift使用OC框架" width="450" height="218"><br></p>
+<p><a href="http://photozou.jp/photo/show/3167534/247718892" target="_blank" rel="external"><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718892.v1494472099.jpg" alt="10C510A6-B0F0-4E48-B87C-5376FC98A58D" width="450" height="194"></a><br><br>愉快使用OC和Swift的混编吧</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/56109/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1763,143 +1926,11 @@ str[range]  // Hello, playgroun</code></pre>
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-测试分类 " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/16107/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="王森">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王森博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/posts/16107/" itemprop="url">
-                  Hello World
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-15T09:39:04+08:00">
-                2017-03-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/posts/16107/" class="leancloud_visitors" data-flag-title="Hello World">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>新的一片天</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1944,7 +1975,7 @@ str[range]  // Hello, playgroun</code></pre>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
