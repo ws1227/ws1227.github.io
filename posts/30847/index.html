@@ -97,7 +97,7 @@
 <meta property="og:site_name" content="王森博客">
 <meta property="og:description" content="装饰器可以不改变被装饰函数内容的情况下给函数本身增加一些代码，如下边例子 w1函数是一个闭包这里就是一个装饰函数，为了验证f1函数是否需要被执行 就作为函数innerfunc的参数传入w1 ，执行innerfunc()调用inner函数 验证通过则执行函数func()即 f1()
 1234567891011121314151617def w1(func):    def inner():">
-<meta property="og:updated_time" content="2017-11-02T07:47:15.000Z">
+<meta property="og:updated_time" content="2017-11-02T07:49:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python装饰器的简单理解">
 <meta name="twitter:description" content="装饰器可以不改变被装饰函数内容的情况下给函数本身增加一些代码，如下边例子 w1函数是一个闭包这里就是一个装饰函数，为了验证f1函数是否需要被执行 就作为函数innerfunc的参数传入w1 ，执行innerfunc()调用inner函数 验证通过则执行函数func()即 f1()
@@ -419,7 +419,7 @@
 </blockquote>
 <p>上边可以看出</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">之前的innerfunc = w1(f1)就换成了 @w1写在f1函数体上边 即为完整的装饰器</div></pre></td></tr></table></figure>
-<p>这样就实现了不改变f1 或者f2的代码的情况下 给函数增加了其他方法 之类的装饰器比较简单就是 <strong>if True:</strong> 验证通过即执行函数</p>
+<p>这样就实现了不改变f1 或者f2的代码的情况下 给函数增加了其他方法 这里的装饰器比较简单就是 <strong>if True:</strong> 验证通过即执行函数</p>
 <p>可以参考<a href="http://python.jobbole.com/82344/" target="_blank" rel="external">http://python.jobbole.com/82344/</a></p>
 
       

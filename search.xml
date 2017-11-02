@@ -5,7 +5,7 @@
     <entry>
       <title><![CDATA[Python装饰器的简单理解]]></title>
       <url>%2Fposts%2F30847%2F</url>
-      <content type="text"><![CDATA[装饰器可以不改变被装饰函数内容的情况下给函数本身增加一些代码，如下边例子 w1函数是一个闭包这里就是一个装饰函数，为了验证f1函数是否需要被执行 就作为函数innerfunc的参数传入w1 ，执行innerfunc()调用inner函数 验证通过则执行函数func()即 f1() 1234567891011121314151617def w1(func): def inner(): print("验证权限") if True: func() return inner def f1(): print("----f1----")def f2(): print("f2")innerfunc = w1(f1)innerfunc() 然后看懂了这个例子就改为装饰器的写法 12345678910111213141516171819def w1(func): def inner(): print("验证权限") if True: func() return inner@w1 # @w1 = w1(f1)def f1(): print("----f1----")@w1def f2(): print("----f2----")f1()f2() 打印 验证权限 —-f1—- 验证权限 —-f2—- 上边可以看出 1之前的innerfunc = w1(f1)就换成了 @w1写在f1函数体上边 即为完整的装饰器 这样就实现了不改变f1 或者f2的代码的情况下 给函数增加了其他方法 之类的装饰器比较简单就是 if True: 验证通过即执行函数 可以参考http://python.jobbole.com/82344/]]></content>
+      <content type="text"><![CDATA[装饰器可以不改变被装饰函数内容的情况下给函数本身增加一些代码，如下边例子 w1函数是一个闭包这里就是一个装饰函数，为了验证f1函数是否需要被执行 就作为函数innerfunc的参数传入w1 ，执行innerfunc()调用inner函数 验证通过则执行函数func()即 f1() 1234567891011121314151617def w1(func): def inner(): print("验证权限") if True: func() return inner def f1(): print("----f1----")def f2(): print("f2")innerfunc = w1(f1)innerfunc() 然后看懂了这个例子就改为装饰器的写法 12345678910111213141516171819def w1(func): def inner(): print("验证权限") if True: func() return inner@w1 # @w1 = w1(f1)def f1(): print("----f1----")@w1def f2(): print("----f2----")f1()f2() 打印 验证权限 —-f1—- 验证权限 —-f2—- 上边可以看出 1之前的innerfunc = w1(f1)就换成了 @w1写在f1函数体上边 即为完整的装饰器 这样就实现了不改变f1 或者f2的代码的情况下 给函数增加了其他方法 这里的装饰器比较简单就是 if True: 验证通过即执行函数 可以参考http://python.jobbole.com/82344/]]></content>
     </entry>
 
     
