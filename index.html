@@ -374,6 +374,28 @@
           </span>
 
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -411,11 +433,10 @@
 
       
         
-          
-            <p>装饰器可以不改变被装饰函数内容的情况下给函数本身增加一些代码，如下边例子 w1函数是一个闭包这里就是一个装饰函数，为了验证f1函数是否需要被执行 就作为函数innerfunc的参数传入w1 ，执行innerfunc()调用inner函数 验证通过则执行函数func()即 f1()</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">def w1(func):</div><div class="line">    def inner():</div><div class="line">        print(<span class="string">"验证权限"</span>)</div><div class="line">        <span class="keyword">if</span> True:</div><div class="line">            func()</div><div class="line">    <span class="keyword">return</span> inner</div><div class="line">    </div><div class="line">def f1():</div><div class="line">    print(<span class="string">"----f1----"</span>)</div><div class="line"></div><div class="line">def f2():</div><div class="line">    print(<span class="string">"f2"</span>)</div><div class="line"></div><div class="line">innerfunc = w1(f1)</div><div class="line"></div><div class="line">innerfunc()</div></pre></td></tr></table></figure>
+          <p>装饰器可以不改变被装饰函数内容的情况下给函数本身增加一些代码，如下边例子 w1函数是一个闭包这里就是一个装饰函数，为了验证f1函数是否需要被执行 就作为函数innerfunc的参数传入w1 ，执行innerfunc()调用inner函数 验证通过则执行函数func()即 f1()</p>
+<p>####无参数的函数装饰<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">w1</span><span class="params">(func)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inner</span><span class="params">()</span>:</span></div><div class="line">        print(<span class="string">"验证权限"</span>)</div><div class="line">        <span class="keyword">if</span> <span class="keyword">True</span>:</div><div class="line">            func()</div><div class="line">    <span class="keyword">return</span> inner</div><div class="line">    </div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">f1</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">"----f1----"</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">"f2"</span>)</div><div class="line"></div><div class="line">innerfunc = w1(f1)</div><div class="line"></div><div class="line">innerfunc()</div></pre></td></tr></table></figure></p>
 <p>然后看懂了这个例子就改为装饰器的写法</p>
-<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">def w1(func):</div><div class="line">    def inner():</div><div class="line">        print(<span class="string">"验证权限"</span>)</div><div class="line">        <span class="keyword">if</span> True:</div><div class="line">            func()</div><div class="line">    <span class="keyword">return</span> inner</div><div class="line"></div><div class="line"></div><div class="line">@w1  <span class="meta"># @w1 =  w1(f1)</span></div><div class="line">def f1():</div><div class="line">    print(<span class="string">"----f1----"</span>)</div><div class="line"></div><div class="line">@w1</div><div class="line">def f2():</div><div class="line">    print(<span class="string">"----f2----"</span>)</div><div class="line"></div><div class="line">f1()</div><div class="line">f2()</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">w1</span><span class="params">(func)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inner</span><span class="params">()</span>:</span></div><div class="line">        print(<span class="string">"验证权限"</span>)</div><div class="line">        <span class="keyword">if</span> <span class="keyword">True</span>:</div><div class="line">            func()</div><div class="line">    <span class="keyword">return</span> inner</div><div class="line"></div><div class="line"></div><div class="line"><span class="meta">@w1  # @w1 =  w1(f1)</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">f1</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">"----f1----"</span>)</div><div class="line"></div><div class="line"><span class="meta">@w1</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">"----f2----"</span>)</div><div class="line"></div><div class="line">f1()</div><div class="line">f2()</div></pre></td></tr></table></figure>
 <p>打印</p>
 <blockquote>
 <p>验证权限 —-f1—-<br>  验证权限  —-f2—-</p>
@@ -423,9 +444,17 @@
 <p>上边可以看出</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">之前的innerfunc = w1(f1)就换成了 @w1写在f1函数体上边 即为完整的装饰器</div></pre></td></tr></table></figure>
 <p>这样就实现了不改变f1 或者f2的代码的情况下 给函数增加了其他方法 这里的装饰器比较简单就是 <strong>if True:</strong> 验证通过即执行函数</p>
-<p>可以参考<a href="http://python.jobbole.com/82344/" target="_blank" rel="external">http://python.jobbole.com/82344/</a></p>
-
-          
+<p>再看个简单例子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">makeBlod</span><span class="params">(fn)</span>:</span></div><div class="line">	print(<span class="string">"函数不执行的时候只要解释器执行@makeBlod就执行此函数了只是暂不调用wrapped函数"</span>)</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapped</span><span class="params">()</span>:</span></div><div class="line">        <span class="keyword">return</span> <span class="string">"&lt;br&gt;"</span> + fn() + <span class="string">"&lt;/br&gt;"</span></div><div class="line">    <span class="keyword">return</span> wrapped</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">makeItalic</span><span class="params">(fn)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapped</span><span class="params">()</span>:</span></div><div class="line">        <span class="keyword">return</span> <span class="string">"&lt;i&gt;"</span> + fn() + <span class="string">"&lt;/i&gt;"</span></div><div class="line">    <span class="keyword">return</span> wrapped</div><div class="line"><span class="comment">#Python解释器执行到这里就开始执行装饰器 而不会等到函数执行的时候再去执行装饰器</span></div><div class="line"><span class="meta">@makeBlod</span></div><div class="line"><span class="meta">@makeItalic</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">return</span> <span class="string">"hello world"</span></div><div class="line"></div><div class="line">print(test())</div></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;br&gt;&lt;i&gt;hello world&lt;/i&gt;&lt;/br&gt;</div></pre></td></tr></table></figure></p>
+<p>这里注意虽然@makeBlod装饰器先执行但是解释器在往下执行的时候遇到装饰器@makeItalic 就会先等@makeItalic执行wrapped函数完再执行@makeBlod装饰器的wrapped函数</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/posts/30847/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1962,7 +1991,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1973,7 +2002,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
