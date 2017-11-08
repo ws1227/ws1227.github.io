@@ -90,22 +90,22 @@
 
 
 <meta name="description" content="title: iOS各种线程锁的介绍及使用date: 2017-11-08 17:20:51
-tags:###线程锁
-在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？线程安全是什么？当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，才能使">
+tags: OC###线程锁
+在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？线程安全是什么？当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="王森博客">
 <meta property="og:url" content="blog.51zan.cc/posts/0/index.html">
 <meta property="og:site_name" content="王森博客">
 <meta property="og:description" content="title: iOS各种线程锁的介绍及使用date: 2017-11-08 17:20:51
-tags:###线程锁
-在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？线程安全是什么？当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，才能使">
+tags: OC###线程锁
+在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？线程安全是什么？当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，">
 <meta property="og:image" content="http://art21.photozou.jp/pub/534/3167534/photo/252180739_624.v1510132562.png">
-<meta property="og:updated_time" content="2017-11-08T09:33:24.000Z">
+<meta property="og:updated_time" content="2017-11-08T09:37:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="王森博客">
 <meta name="twitter:description" content="title: iOS各种线程锁的介绍及使用date: 2017-11-08 17:20:51
-tags:###线程锁
-在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？线程安全是什么？当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，才能使">
+tags: OC###线程锁
+在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？线程安全是什么？当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，">
 <meta name="twitter:image" content="http://art21.photozou.jp/pub/534/3167534/photo/252180739_624.v1510132562.png">
 
 
@@ -416,7 +416,7 @@ tags:###线程锁
       
         <hr>
 <p>title: iOS各种线程锁的介绍及使用<br>date: 2017-11-08 17:20:51</p>
-<h2 id="tags"><a href="#tags" class="headerlink" title="tags:"></a>tags:</h2><p>###线程锁</p>
+<h2 id="tags-OC"><a href="#tags-OC" class="headerlink" title="tags: OC"></a>tags: OC</h2><p>###线程锁</p>
 <p>在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？</p><br><p><strong>线程安全是什么？</strong></p><br><p>当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，才能使数据不会被其他线程影响。而线程不安全，则是在同一时刻可以有多个线程对该数据进行访问，从而得不到预期的结果。</p><br><p>比如写文件和读文件，当一个线程在写文件的时候，理论上来说，如果这个时候另一个线程来直接读取的话，那么得到的结果可能是你无法预料的。</p><br><p><strong>怎么来保证线程安全？</strong></p><br><p>通常我们使用锁的机制来保证线程安全，即确保同一时刻只有同一个线程来对同一个数据源进行访问。<br><br></p><br><p>YY大神 的 不再安全的 OSSpinLock 这边博客中列出了各种锁以及性能比较:</p><br><img src="http://art21.photozou.jp/pub/534/3167534/photo/252180739_624.v1510132562.png" alt="性能对比"><br><p>这里性能比较的只是加锁立马解锁的时间消耗，并没有计算竞争时候的时间消耗。</p><br><p><span style="color: #ff0000"><strong>锁的介绍及简单使用</strong></span></p><br><p><strong>1.@synchronized</strong></p><br><p>@synchronized是 iOS 中最常见的锁，用法很简单：</p>
 
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</div><div class="line">  [<span class="keyword">super</span> viewDidLoad];</div><div class="line"></div><div class="line">  [<span class="keyword">self</span> synchronized];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)synchronized &#123;</div><div class="line">  <span class="built_in">NSObject</span> * cjobj = [<span class="built_in">NSObject</span> new];</div><div class="line">  </div><div class="line">  <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">    <span class="keyword">@synchronized</span>(cjobj)&#123;</div><div class="line">      <span class="built_in">NSLog</span>(<span class="string">@"线程1开始"</span>);</div><div class="line">      sleep(<span class="number">3</span>);</div><div class="line">      <span class="built_in">NSLog</span>(<span class="string">@"线程1结束"</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">  </div><div class="line">  <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">    sleep(<span class="number">1</span>);</div><div class="line">    <span class="keyword">@synchronized</span>(cjobj)&#123;</div><div class="line">      <span class="built_in">NSLog</span>(<span class="string">@"线程2"</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
@@ -740,7 +740,7 @@ tags:###线程锁
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tags"><span class="nav-number">1.</span> <span class="nav-text">tags:</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tags-OC"><span class="nav-number">1.</span> <span class="nav-text">tags: OC</span></a></li></ol></div>
             
 
           </div>
