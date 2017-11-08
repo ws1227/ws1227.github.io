@@ -324,6 +324,143 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/13633/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="王森博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/posts/13633/" itemprop="url">
+                  Objective-C Runtime 1小时入门教程
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-15T17:28:25+08:00">
+                2017-05-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/posts/13633/" class="leancloud_visitors" data-flag-title="Objective-C Runtime 1小时入门教程">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><h1>一、前言：</h1></p>
+<p>如果你没有Objective-C基础，请学习了基础的iOS开发再来，这个1小时是给有一定iOS基础的童鞋的。如果你是大牛或者你感觉Objective-C Runtime太简单不用1小时学习的，也请您绕道，这或许只是我的私人笔记了。</p><br><p><font color="red">请跟着教程“一步步来”，请不要大概地扫两眼就说看不懂——以这种态度写成什么样你也看不懂。这是<b>1小时入门教程，请不要试图在1分钟内入门！</font></p><br><h1>二、本文目标：</h1><br><p>1小时让你知道什么是Objective-C Runtime，并对它有一定的基本了解，可以在开发过程中运用自如。</p><br><h1>三、Objective-C Runtime到底是什么东西？</h1><br><p>简而言之，Objective-C Runtime是一个将C语言转化为面向对象语言的扩展。<br /><br>我们将C++和Objective进行对比，虽然C++和Objective-C都是在C的基础上加入面向对象的特性扩充而成的程序设计语言，但二者实现的机制差异很大。C++是基于静态类型，而Objective-C是基于动态运行时类型。<s>也就是说用C++编写的程序编译时就直接编译成了可令机器读懂的机器语言；用Objective-C编写的程序不能直接编译成可令机器读懂的机器语言，而是在程序运行的时候，通过Runtime把程序转为可令机器读懂的机器语言。</s>也就是说用C++编写的程序通过编译器直接把函数地址硬编码进入可执行文件；而Objective-C无法通过编译器直接把函数地址硬编码进入可执行文件，而是在程序运行的时候，利用Runtime根据条件判断作出决定。函数标识与函数过程的真正内容之间的关联可以动态修改。Runtime是Objective不可缺少的重要一部分。</p><br><p>传送门-&gt;<a rel="external nofollow" href="https://github.com/ianisme/IANRuntimeStudy/tree/master/objc-runtime%E6%BA%90%E7%A0%81" target="_blank">runtime源码</a></p><br><h1>四、Objective-C的元素认知</h1><br><h2>4.1 id和Class</h2><br><p>打开/Public Headers/objc.h文件可以看到如下定义：</p><br><pre><code>#if !OBJC_TYPES_DEFINED<br>/// An opaque type that represents an Objective-C class.<br>typedef struct objc_class <em>Class;<br><br>/// Represents an instance of a class.<br>struct objc_object {<br>Class isa  OBJC_ISA_AVAILABILITY;<br>};<br><br>/// A pointer to an instance of a class.<br>typedef struct objc_object </em>id;<br>#endif<br></code></pre><br><p>Class是一个指向objc_class结构体的指针，而id是一个指向objc_object结构体的指针，其中的isa是一个指向objc_class结构体的指针。其中的id就是我们所说的对象，Class就是我们所说的类。</p><br><p>打开/Public Headers/runtime.h文件<br /><br>objc_class的定义如下：</p><br><pre><code>typedef struct objc_class <em>Class;<br>struct objc_class {<br>Class isa                                 OBJC_ISA_AVAILABILITY; // metaclass<br>#if !<strong>OBJC2</strong><br>Class super_class                         OBJC2_UNAVAILABLE; // 父类<br>const char </em>name                          OBJC2_UNAVAILABLE; // 类名<br>long version                              OBJC2_UNAVAILABLE; // 类的版本信息，默认为0，可以通过runtime函数class_setVersion或者class_getVersion进行修改、读取<br>long info                                 OBJC2_UNAVAILABLE; // 类信息，供运行时期使用的一些位标识，如CLS_CLASS (0x1L) 表示该类为普通 class，其中包含实例方法和变量;CLS_META (0x2L) 表示该类为 metaclass，其中包含类方法;<br>long instance_size                        OBJC2_UNAVAILABLE; // 该类的实例变量大小（包括从父类继承下来的实例变量）<br>struct objc_ivar_list <em>ivars              OBJC2_UNAVAILABLE; // 该类的成员变量地址列表<br>struct objc_method_list **methodLists     OBJC2_UNAVAILABLE; // 方法地址列表，与 info 的一些标志位有关，如CLS_CLASS (0x1L)，则存储实例方法，如CLS_META (0x2L)，则存储类方法;<br>struct objc_cache </em>cache                  OBJC2_UNAVAILABLE; // 缓存最近使用的方法地址，用于提升效率；<br>struct objc_protocol_list <em>protocols      OBJC2_UNAVAILABLE; // 存储该类声明遵守的协议的列表<br>#endif<br>}<br>/</em> Use <code>Class</code> instead of <code>struct objc_class *</code> <em>/<br></code></pre><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/posts/13633/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/28457/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1768,164 +1905,6 @@ str[range]  // Hello, playgroun</code></pre>
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/10450/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="王森">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="王森博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/posts/10450/" itemprop="url">
-                  Hexo配合github搭建免费博客，绑定域名
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-15T11:34:25+08:00">
-                2017-03-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/posts/10450/" class="leancloud_visitors" data-flag-title="Hexo配合github搭建免费博客，绑定域名">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>出发点：有那么大的博客平台不用为什么自己搭建博客，说白了就是玩玩坚持写几篇博客然后就是装逼了呗。</p><br><p><a href="http://www.jianshu.com/p/034d888abcb3" target="_blank" rel="external">本篇文章在我的简书地址</a></p><br><p>今天要讲的搭建博客教程很简单不需要什么钱当然有钱可以买虚拟机配个数据库可以玩wordpress搭建博客更简单，记得万网有活动几块钱就可以买个一年的虚拟机活动长期有可以看看，这里就不详细介绍了。</p><br><p>言归正传，本篇博客说的是用github和  <a href="https://hexo.io/zh-cn/docs/" target="_blank" rel="external">Hexo</a>搭建一个免费的博客网站，搭建完看起来像这样 <a href="http://ws1227.github.io" target="_blank" rel="external">http://ws1227.github.io</a> 如果有个人域名就可以类似这样<a href="http://wangsen.website/">http://wangsen.website/</a> 后边再介绍。</p><br><p> 先说下需要的基本条件：</p><br><h5 id="安装Node（必须）"><a href="#安装Node（必须）" class="headerlink" title="安装Node（必须）"></a>安装Node（必须）</h5><p> 作用：用来生成静态页面的 到Node.js官网下载相应平台的最新版本，一路安装即可。提供一个mac版本的<a href="https://pan.baidu.com/s/1gf5NSyf" target="_blank" rel="external">https://pan.baidu.com/s/1gf5NSyf</a> 不用翻墙下载了</p><br><h5 id="安装Git（必须）"><a href="#安装Git（必须）" class="headerlink" title="安装Git（必须）"></a>安装Git（必须）</h5><p>作用：把本地的hexo内容提交到github上去. 安装Xcode就自带有Git，我就不多说了。没有的话可以去<a href="https://git-scm.com/downloads" target="_blank" rel="external">https://git-scm.com/downloads</a> 下载</p><br><h4 id="申请GitHub（必须）"><a href="#申请GitHub（必须）" class="headerlink" title="申请GitHub（必须）"></a>申请GitHub（必须）</h4><p>作用：是用来做博客的远程创库、域名、服务器之类的，怎么与本地hexo建立连接等下讲。 github账号我也不再啰嗦了,没有的话直接申请就行了，跟一般的注册账号差不多，SSH Keys，看你自己了，可以不配制，不配置的话以后每次对自己的博客有改动提交的时候就要手动输入账号密码，配置了就不需要了，怎么配置我就不多说了，网上有很多教程。</p><br><h4 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h4><p>Node和Git都安装好后，可执行如下命令安装hexo：</p><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo npm install -g hexo</div></pre></td></tr></table></figure><br><p>创建一个文件夹，如：Blog，cd到Blog里执行hexo init的。命令：</p><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo init</div></pre></td></tr></table></figure><br><p>好啦，至此，全部安装工作已经完成！</p><br><p>因为Hexo编写的文章都是用 <a href="http://markdown.tw/" target="_blank" rel="external">markdown</a>语法写的 所以需要生成静态界面也就是Html网页。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/posts/10450/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1975,7 +1954,7 @@ str[range]  // Hello, playgroun</code></pre>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-count">22</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
