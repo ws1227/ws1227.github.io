@@ -95,6 +95,7 @@
 <meta property="og:url" content="blog.51zan.cc/posts/10477/index.html">
 <meta property="og:site_name" content="一个精通猪肉炖粉条的程序猿">
 <meta property="og:description" content="Copy，Strong的区别需要了解点内存管理的知识，Strong是ARC下引入的修饰，相当于手动管理内存(MRC)下的retain，在相关代码下，常常看到有的人用copy修饰NSString,NSArray,NSDictionary..等存在可变与不可变之分的对象，常常会用copy，而不是strong,下面代码来解释一下strong与copy的区别:先说明一下什么叫做浅拷贝，什么叫做深拷贝">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-11-01T08:18:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS属性修饰符用copy、strong修饰的终极解释">
@@ -433,7 +434,7 @@
 <p>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] stringStrong = StrongMutableStrong!<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] mutableStrong = StrongMutableStrong!<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] stringCopy = CopyMutable<br>2016-02-29 19:20:27.652 StrongOrCopy[5245:446189] mutableCopy = CopyMutableCopy!  </p>
 </blockquote>
 <p>   这样看来，在不可变对象之间进行转换，strong与copy作用是一样的，但是如果在不可变与可变之间进行操作，那么楼主比较推荐copy,这也就是为什么很多地方用copy，而不是strong修饰NSString,NSArray等存在可变不可变之分的类对象了，避免出现意外的数据操作.</p>
-<p>参考自<br><a href="http://blog.csdn.net/itianyi/article/details/9018567" target="_blank" rel="external">NSString什么时候用copy，什么时候用strong</a><br><a href="http://blog.csdn.net/runintolove/article/details/50767523" target="_blank" rel="external">属性用copy、strong修饰的区别</a></p>
+<p>参考自<br><a href="http://blog.csdn.net/itianyi/article/details/9018567" target="_blank" rel="noopener">NSString什么时候用copy，什么时候用strong</a><br><a href="http://blog.csdn.net/runintolove/article/details/50767523" target="_blank" rel="noopener">属性用copy、strong修饰的区别</a></p>
 
       
     </div>
@@ -570,7 +571,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -653,8 +654,8 @@
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

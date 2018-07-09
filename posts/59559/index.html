@@ -89,34 +89,18 @@
 
 
 
-<meta name="description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。
-
-KVO (Key-Value Observing)
-
-KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知。
-
-有意思的">
+<meta name="description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。  KVO (Key-Value Observing)  KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知。  有意思的">
+<meta name="keywords" content="iOS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="自己动手实现KVO">
 <meta property="og:url" content="blog.51zan.cc/posts/59559/index.html">
 <meta property="og:site_name" content="一个精通猪肉炖粉条的程序猿">
-<meta property="og:description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。
-
-KVO (Key-Value Observing)
-
-KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知。
-
-有意思的">
+<meta property="og:description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。  KVO (Key-Value Observing)  KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知。  有意思的">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-07-07T06:32:57.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="自己动手实现KVO">
-<meta name="twitter:description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。
-
-KVO (Key-Value Observing)
-
-KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知。
-
-有意思的">
+<meta name="twitter:description" content="本篇会探究 KVO (Key-Value Observing) 实现机制，并去实践一番 - 利用 Runtime 自己动手去实现 KVO 。  KVO (Key-Value Observing)  KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 Cocoa Binding 的基础。当被观察对象的某个属性发生更改时，观察者对象会获得通知。  有意思的">
 
 
 
@@ -456,11 +440,11 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
 
 <h2 id="kvo">KVO 实现机制</h2>
 
-<p>KVO 的实现也依赖于 Objective-C 强大的 Runtime 。Apple 的文档有简单提到过 KVO 的<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html" target="_blank" rel="external">实现</a>：</p>
+<p>KVO 的实现也依赖于 Objective-C 强大的 Runtime 。Apple 的文档有简单提到过 KVO 的<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html" target="_blank" rel="noopener">实现</a>：</p>
 
 <blockquote><br>  <p>Automatic key-value observing is implemented using a technique called isa-swizzling… When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class …</p><br></blockquote>
 
-<p>Apple 的文档真是一笔带过，唯一有用的信息也就是：被观察对象的 <code>isa</code> 指针会指向一个中间类，而不是原来真正的类。看来，Apple 并不希望过多暴露 KVO 的实现细节。不过，要是你用 runtime 提供的方法去深入挖掘，所有被掩盖的细节都会原形毕露。Mike Ash 早在 2009 年就做了这么个<a href="https://www.mikeash.com/pyblog/friday-qa-2009-01-23.html" target="_blank" rel="external">探究</a>。</p>
+<p>Apple 的文档真是一笔带过，唯一有用的信息也就是：被观察对象的 <code>isa</code> 指针会指向一个中间类，而不是原来真正的类。看来，Apple 并不希望过多暴露 KVO 的实现细节。不过，要是你用 runtime 提供的方法去深入挖掘，所有被掩盖的细节都会原形毕露。Mike Ash 早在 2009 年就做了这么个<a href="https://www.mikeash.com/pyblog/friday-qa-2009-01-23.html" target="_blank" rel="noopener">探究</a>。</p>
 
 <p>简单概述下 KVO 的实现：</p>
 
@@ -474,7 +458,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
 
 <p>比如，你只能通过重写 <code>-observeValueForKeyPath:ofObject:change:context:</code> 方法来获得通知。想要提供自定义的 <code>selector</code> ，不行；想要传一个 <code>block</code> ，门都没有。而且你还要处理父类的情况 - 父类同样监听同一个对象的同一个属性。但有时候，你不知道父类是不是对这个消息有兴趣。虽然 <code>context</code> 这个参数就是干这个的，也可以解决这个问题 - 在 <code>-addObserver:forKeyPath:options:context:</code> 传进去一个父类不知道的 <code>context</code>。但总觉得框在这个 API 的设计下，代码写的很别扭。至少至少，也应该支持 <code>block</code> 吧。</p>
 
-<p>有不少人都觉得官方 KVO 不好使的。Mike Ash 的 <a href="https://www.mikeash.com/pyblog/key-value-observing-done-right.html" target="_blank" rel="external">Key-Value Observing Done Right</a>，以及获得不少分享讨论的 <a href="http://khanlou.com/2013/12/kvo-considered-harmful/" target="_blank" rel="external">KVO Considered Harmful</a> 都把 KVO 拿出来吊打了一番。所以在实际开发中 KVO 使用的情景并不多，更多时候还是用 Delegate 或 NotificationCenter。</p>
+<p>有不少人都觉得官方 KVO 不好使的。Mike Ash 的 <a href="https://www.mikeash.com/pyblog/key-value-observing-done-right.html" target="_blank" rel="noopener">Key-Value Observing Done Right</a>，以及获得不少分享讨论的 <a href="http://khanlou.com/2013/12/kvo-considered-harmful/" target="_blank" rel="noopener">KVO Considered Harmful</a> 都把 KVO 拿出来吊打了一番。所以在实际开发中 KVO 使用的情景并不多，更多时候还是用 Delegate 或 NotificationCenter。</p>
 
 <h2 id="kvo">自己实现 KVO</h2>
 
@@ -621,7 +605,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
 
 <p>就此，一个基本的 KVO 就可以 work 了。当然，这只是一个一天多做出来的小东西，会有 bug，也有很多可以优化完善的地方。但作为 demo 演示如何利用 Runtime 动态创建类、如何实现 KVO，足已。</p>
 
-<p>完整的例子可以从这里下载：<a href="https://github.com/ws1227/MySampleCoe" target="_blank" rel="external">ImplementKVO</a></p>
+<p>完整的例子可以从这里下载：<a href="https://github.com/ws1227/MySampleCoe" target="_blank" rel="noopener">ImplementKVO</a></p>
 
       
     </div>
@@ -773,7 +757,7 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -872,8 +856,8 @@ KVO 是 Objective-C 对观察者模式（Observer Pattern）的实现。也是 C
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

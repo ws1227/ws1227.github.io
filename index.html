@@ -95,6 +95,7 @@
 <meta property="og:url" content="blog.51zan.cc/index.html">
 <meta property="og:site_name" content="一个精通猪肉炖粉条的程序猿">
 <meta property="og:description" content="王森技术博客作为个人博客，主要记录技术文档涉及iOS等多个语言平台，王森博客-可怜的程序猿记录的一个精通猪肉炖粉条的程序猿博客">
+<meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个精通猪肉炖粉条的程序猿">
 <meta name="twitter:description" content="王森技术博客作为个人博客，主要记录技术文档涉及iOS等多个语言平台，王森博客-可怜的程序猿记录的一个精通猪肉炖粉条的程序猿博客">
@@ -324,6 +325,137 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/63534/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一个精通猪肉炖粉条的程序猿">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/posts/63534/" itemprop="url">
+                  test
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-09T14:30:54+08:00">
+                2018-07-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/posts/63534/" class="leancloud_visitors" data-flag-title="test">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/41966/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -411,10 +543,10 @@
 
       
         
-          <h3 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h3><p>在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？</p><br><p><strong>线程安全是什么？</strong></p><br><p>当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，才能使数据不会被其他线程影响。而线程不安全，则是在同一时刻可以有多个线程对该数据进行访问，从而得不到预期的结果。</p><br><p>比如写文件和读文件，当一个线程在写文件的时候，理论上来说，如果这个时候另一个线程来直接读取的话，那么得到的结果可能是你无法预料的。</p><br><p><strong>怎么来保证线程安全？</strong></p><br><p>通常我们使用锁的机制来保证线程安全，即确保同一时刻只有同一个线程来对同一个数据源进行访问。<br /><br></p><br><p>YY大神 的 不再安全的 OSSpinLock 这边博客中列出了各种锁以及性能比较:</p><br><img src="http://art21.photozou.jp/pub/534/3167534/photo/252180739_624.v1510132562.png" alt="性能对比"><br><p>这里性能比较的只是加锁立马解锁的时间消耗，并没有计算竞争时候的时间消耗。</p><br><p><span style="color: #ff0000"><strong>锁的介绍及简单使用</strong></span></p><br><p><strong>1.@synchronized</strong></p><br><p>@synchronized是 iOS 中最常见的锁，用法很简单：</p>
+          <h3 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h3><p>在平时的开发中经常使用到多线程，在使用多线程的过程中，难免会遇到资源竞争的问题，那我们怎么来避免出现这种问题那？</p><br><p><strong>线程安全是什么？</strong></p><br><p>当一个线程访问数据的时候，其他的线程不能对其进行访问，直到该线程访问完毕。简单来讲就是在同一时刻，对同一个数据操作的线程只有一个。只有确保了这样，才能使数据不会被其他线程影响。而线程不安全，则是在同一时刻可以有多个线程对该数据进行访问，从而得不到预期的结果。</p><br><p>比如写文件和读文件，当一个线程在写文件的时候，理论上来说，如果这个时候另一个线程来直接读取的话，那么得到的结果可能是你无法预料的。</p><br><p><strong>怎么来保证线程安全？</strong></p><br><p>通常我们使用锁的机制来保证线程安全，即确保同一时刻只有同一个线程来对同一个数据源进行访问。<br><br></p><br><p>YY大神 的 不再安全的 OSSpinLock 这边博客中列出了各种锁以及性能比较:</p><br><img src="http://art21.photozou.jp/pub/534/3167534/photo/252180739_624.v1510132562.png" alt="性能对比"><br><p>这里性能比较的只是加锁立马解锁的时间消耗，并没有计算竞争时候的时间消耗。</p><br><p><span style="color: #ff0000"><strong>锁的介绍及简单使用</strong></span></p><br><p><strong>1.@synchronized</strong></p><br><p>@synchronized是 iOS 中最常见的锁，用法很简单：</p>
 
 <figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</div><div class="line">  [<span class="keyword">super</span> viewDidLoad];</div><div class="line"></div><div class="line">  [<span class="keyword">self</span> synchronized];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (<span class="keyword">void</span>)synchronized &#123;</div><div class="line">  <span class="built_in">NSObject</span> * cjobj = [<span class="built_in">NSObject</span> new];</div><div class="line">  </div><div class="line">  <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">    <span class="keyword">@synchronized</span>(cjobj)&#123;</div><div class="line">      <span class="built_in">NSLog</span>(<span class="string">@"线程1开始"</span>);</div><div class="line">      sleep(<span class="number">3</span>);</div><div class="line">      <span class="built_in">NSLog</span>(<span class="string">@"线程1结束"</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">  </div><div class="line">  <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</div><div class="line">    sleep(<span class="number">1</span>);</div><div class="line">    <span class="keyword">@synchronized</span>(cjobj)&#123;</div><div class="line">      <span class="built_in">NSLog</span>(<span class="string">@"线程2"</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>控制台输出：<br /></p>
+<p>控制台输出：<br></p>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">2017-10-18 11:35:13.459194+0800 Thread-Lock[24855:431100] 线程1开始</div><div class="line">2017-10-18 11:35:16.460210+0800 Thread-Lock[24855:431100] 线程1结束</div><div class="line">2017-10-18 11:35:16.460434+0800 Thread-Lock[24855:431101] 线程2</div></pre></td></tr></table></figure>
 <p>从上面的控制台输出时间可以看出来，在线程 1 内容全部输出之后，才输出了线程 2 的内容，“线程1结束”与“线程2”都是在“线程1开始”3 秒后输出的。</p><br><p>@synchronized(cjobj) 指令使用的 cjobj 为该锁的唯一标识，只有当标识相同时，才为满足互斥，如果线程 2 中的 @synchronized(cjobj) 改为 @synchronized(self) ，那么线程 2 就不会被阻塞，@synchronized 指令实现锁的优点就是我们不需要在代码中显式的创建锁对象，便可以实现锁的机制，但作为一种预防措施，@synchronized 块会隐式的添加一个异常处理例程来保护代码，该处理例程会在异常抛出的时候自动的释放互斥锁。所以如果不想让隐式的异常处理例程带来额外的开销，你可以考虑使用锁对象。</p><br><p>@sychronized(cjobj){} 内部 cjobj 被释放或被设为 nil 不会影响锁的功能，但如果 cjobj 一开始就是 nil，那就会丢失了锁的功能了。</p><br><p><strong>2.NSLock</strong></p><br><p>先看看iOS中NSLock类的.h文件，从代码中可以看出，该类分成了几个子类：NSLock、NSConditionLock、NSRecursiveLock、NSCondition，然后有一个 NSLocking 协议：</p>
@@ -1049,10 +1181,10 @@
 <li>handle_data(data)</li>
 </ul>
 <h3 id="1-获取标签属性"><a href="#1-获取标签属性" class="headerlink" title="1. 获取标签属性"></a>1. 获取标签属性</h3><p>tag是的html标签，attrs是 (属性，值)元组(tuple)的列表(list). </p>
-<p>如一个标签为：<input type="hidden" name="NXX" id="IDXX" value="VXX" /></p>
+<p>如一个标签为：<input type="hidden" name="NXX" id="IDXX" value="VXX"></p>
 <p>那么它的attrs列表为[(‘type’, ‘hidden’), (‘name’, ‘NXX’), (‘id’, ‘IDXX’), (‘value’, ‘VXX’)]<br>HTMLParser自动将tag和attrs都转为小写。</p>
 <p>下面给出的例子抽取了html中的所有链接：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> HTMLParser <span class="keyword">import</span> HTMLParser</div><div class="line">  </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyHTMLParser</span><span class="params">(HTMLParser)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        HTMLParser.__init__(self)</div><div class="line">        self.links = []</div><div class="line">  </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_starttag</span><span class="params">(self, tag, attrs)</span>:</span></div><div class="line">        <span class="comment">#print "Encountered the beginning of a %s tag" % tag</span></div><div class="line">        <span class="keyword">if</span> tag == <span class="string">"a"</span>:</div><div class="line">            <span class="keyword">if</span> len(attrs) == <span class="number">0</span>: <span class="keyword">pass</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">for</span> (variable, value)  <span class="keyword">in</span> attrs:</div><div class="line">                    <span class="keyword">if</span> variable == <span class="string">"href"</span>:</div><div class="line">                        self.links.append(value)</div><div class="line">  </div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</div><div class="line">    html_code = <span class="string">"""</div><div class="line">    &lt;a href="www.google.com"&gt; google.com&lt;/a&gt;</div><div class="line">    &lt;A Href="www.pythonclub.org"&gt; PythonClub &lt;/a&gt;</div><div class="line">    &lt;A HREF = "www.sina.com.cn"&gt; Sina &lt;/a&gt;</div><div class="line">    """</span></div><div class="line">    hp = MyHTMLParser()</div><div class="line">    hp.feed(html_code)</div><div class="line">    hp.close()</div><div class="line">    print(hp.links)</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> HTMLParser <span class="keyword">import</span> HTMLParser</div><div class="line">  </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyHTMLParser</span><span class="params">(HTMLParser)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        HTMLParser.__init__(self)</div><div class="line">        self.links = []</div><div class="line">  </div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_starttag</span><span class="params">(self, tag, attrs)</span>:</span></div><div class="line">        <span class="comment">#print "Encountered the beginning of a %s tag" % tag</span></div><div class="line">        <span class="keyword">if</span> tag == <span class="string">"a"</span>:</div><div class="line">            <span class="keyword">if</span> len(attrs) == <span class="number">0</span>: <span class="keyword">pass</span></div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">for</span> (variable, value)  <span class="keyword">in</span> attrs:</div><div class="line">                    <span class="keyword">if</span> variable == <span class="string">"href"</span>:</div><div class="line">                        self.links.append(value)</div><div class="line">  </div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</div><div class="line">    html_code = <span class="string">"""</span></div><div class="line">    &lt;a href="www.google.com"&gt; google.com&lt;/a&gt;</div><div class="line">    &lt;A Href="www.pythonclub.org"&gt; PythonClub &lt;/a&gt;</div><div class="line">    &lt;A HREF = "www.sina.com.cn"&gt; Sina &lt;/a&gt;</div><div class="line">    """</div><div class="line">    hp = MyHTMLParser()</div><div class="line">    hp.feed(html_code)</div><div class="line">    hp.close()</div><div class="line">    print(hp.links)</div></pre></td></tr></table></figure>
 <p>输出为：</p>
 <blockquote>
 <p>[‘www.google.com’, ‘www.pythonclub.org’, ‘www.sina.com.cn’]</p>
@@ -1194,9 +1326,9 @@
       
         
           <p>系统性学习Moya+Alamofire+RxSwift+ObjectMapper的配合使用</p>
-<p>主要是练习Moya的熟练使用，全文涉及到CYLTabBarController搭建简单易用的框架、Swift和OC互相调用、FLEX显示界面层级UI的属性、ObjectMapper解析数据、Kingfisher加载网络图片、MBProgressHUD融合到请求里自动显示与隐藏请求等待、MJRefresh作为刷新简单写了一个类别、SDCycleScrollView显示轮播图、Then的使用,最终实现了一个简单的界面…更加深入技术还在探究中，先放上本文的<a href="https://github.com/ws1227/swiftLearn">Demo</a><br><img src="http://art13.photozou.jp/pub/534/3167534/photo/249126056_624.v1499417867.png" alt="示例图片"></p>
-<p>既然是介绍Moya的就主要先来介绍它吧，Moya是对 Alamofire的进一步封装,简化了网络请求,方便维护<br>,方便单元测试,使用Moya项目中网络请求类的部分可能长<a href="https://github.com/ws1227/swiftLearn/blob/master/Tool/ApiManager.swift">这样</a>，所有的请求集中放在一起，集体化管理很方便</p>
-<p><a href="https://github.com/Moya/Moya/tree/master/docs">点击查看官方教程</a></p>
+<p>主要是练习Moya的熟练使用，全文涉及到CYLTabBarController搭建简单易用的框架、Swift和OC互相调用、FLEX显示界面层级UI的属性、ObjectMapper解析数据、Kingfisher加载网络图片、MBProgressHUD融合到请求里自动显示与隐藏请求等待、MJRefresh作为刷新简单写了一个类别、SDCycleScrollView显示轮播图、Then的使用,最终实现了一个简单的界面…更加深入技术还在探究中，先放上本文的<a href="https://github.com/ws1227/swiftLearn" target="_blank" rel="noopener">Demo</a><br><img src="http://art13.photozou.jp/pub/534/3167534/photo/249126056_624.v1499417867.png" alt="示例图片"></p>
+<p>既然是介绍Moya的就主要先来介绍它吧，Moya是对 Alamofire的进一步封装,简化了网络请求,方便维护<br>,方便单元测试,使用Moya项目中网络请求类的部分可能长<a href="https://github.com/ws1227/swiftLearn/blob/master/Tool/ApiManager.swift" target="_blank" rel="noopener">这样</a>，所有的请求集中放在一起，集体化管理很方便</p>
+<p><a href="https://github.com/Moya/Moya/tree/master/docs" target="_blank" rel="noopener">点击查看官方教程</a></p>
 <h4 id="Moya发送简单的网络请求"><a href="#Moya发送简单的网络请求" class="headerlink" title="Moya发送简单的网络请求"></a>Moya发送简单的网络请求</h4><p>枚举类型需满足TargetType协议</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public protocol TargetType &#123;</div><div class="line">var baseURL: NSURL &#123; get &#125;</div><div class="line">var path: String &#123; get &#125;</div><div class="line">var method: Moya.Method &#123; get &#125;</div><div class="line">var parameters: [String: AnyObject]? &#123; get &#125;</div><div class="line">var sampleData: NSData &#123; get &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>实现一个枚举代码如下：</p>
@@ -1700,11 +1832,11 @@
 
 <h2 id="kvo">KVO 实现机制</h2>
 
-<p>KVO 的实现也依赖于 Objective-C 强大的 Runtime 。Apple 的文档有简单提到过 KVO 的<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html">实现</a>：</p>
+<p>KVO 的实现也依赖于 Objective-C 强大的 Runtime 。Apple 的文档有简单提到过 KVO 的<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html" target="_blank" rel="noopener">实现</a>：</p>
 
 <blockquote><br>  <p>Automatic key-value observing is implemented using a technique called isa-swizzling… When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class …</p><br></blockquote>
 
-<p>Apple 的文档真是一笔带过，唯一有用的信息也就是：被观察对象的 <code>isa</code> 指针会指向一个中间类，而不是原来真正的类。看来，Apple 并不希望过多暴露 KVO 的实现细节。不过，要是你用 runtime 提供的方法去深入挖掘，所有被掩盖的细节都会原形毕露。Mike Ash 早在 2009 年就做了这么个<a href="https://www.mikeash.com/pyblog/friday-qa-2009-01-23.html">探究</a>。</p>
+<p>Apple 的文档真是一笔带过，唯一有用的信息也就是：被观察对象的 <code>isa</code> 指针会指向一个中间类，而不是原来真正的类。看来，Apple 并不希望过多暴露 KVO 的实现细节。不过，要是你用 runtime 提供的方法去深入挖掘，所有被掩盖的细节都会原形毕露。Mike Ash 早在 2009 年就做了这么个<a href="https://www.mikeash.com/pyblog/friday-qa-2009-01-23.html" target="_blank" rel="noopener">探究</a>。</p>
 
 <p>简单概述下 KVO 的实现：</p>
 
@@ -1718,7 +1850,7 @@
 
 <p>比如，你只能通过重写 <code>-observeValueForKeyPath:ofObject:change:context:</code> 方法来获得通知。想要提供自定义的 <code>selector</code> ，不行；想要传一个 <code>block</code> ，门都没有。而且你还要处理父类的情况 - 父类同样监听同一个对象的同一个属性。但有时候，你不知道父类是不是对这个消息有兴趣。虽然 <code>context</code> 这个参数就是干这个的，也可以解决这个问题 - 在 <code>-addObserver:forKeyPath:options:context:</code> 传进去一个父类不知道的 <code>context</code>。但总觉得框在这个 API 的设计下，代码写的很别扭。至少至少，也应该支持 <code>block</code> 吧。</p>
 
-<p>有不少人都觉得官方 KVO 不好使的。Mike Ash 的 <a href="https://www.mikeash.com/pyblog/key-value-observing-done-right.html">Key-Value Observing Done Right</a>，以及获得不少分享讨论的 <a href="http://khanlou.com/2013/12/kvo-considered-harmful/">KVO Considered Harmful</a> 都把 KVO 拿出来吊打了一番。所以在实际开发中 KVO 使用的情景并不多，更多时候还是用 Delegate 或 NotificationCenter。</p>
+<p>有不少人都觉得官方 KVO 不好使的。Mike Ash 的 <a href="https://www.mikeash.com/pyblog/key-value-observing-done-right.html" target="_blank" rel="noopener">Key-Value Observing Done Right</a>，以及获得不少分享讨论的 <a href="http://khanlou.com/2013/12/kvo-considered-harmful/" target="_blank" rel="noopener">KVO Considered Harmful</a> 都把 KVO 拿出来吊打了一番。所以在实际开发中 KVO 使用的情景并不多，更多时候还是用 Delegate 或 NotificationCenter。</p>
 
 <h2 id="kvo">自己实现 KVO</h2>
 
@@ -1745,164 +1877,6 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/posts/59559/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/47161/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="王森">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一个精通猪肉炖粉条的程序猿">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/posts/47161/" itemprop="url">
-                  iOS线程安全篇
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-17T15:52:14+08:00">
-                2017-05-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/OC/" itemprop="url" rel="index">
-                    <span itemprop="name">OC</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/posts/47161/" class="leancloud_visitors" data-flag-title="iOS线程安全篇">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><strong>一、前言</strong></span></p><p>前段时间看了几个开源项目，发现他们保持线程同步的方式各不相同，有@synchronized、NSLock、dispatch_semaphore、NSCondition、pthread_mutex、OSSpinLock。后来网上查了一下，发现他们的实现机制各不相同，性能也各不一样。不好意思，我们平常使用最多的@synchronized是性能最差的。下面我们先分别介绍每个加锁方式的使用，在使用一个案例来对他们进行性能对比。</p><p><span style="color: rgb(0, 176, 80);"><strong>二、介绍与使用</strong></span></p><p><strong>2.1、@synchronized</strong></p><pre class="brush:js;toolbar:false">NSObject&nbsp;<em>obj&nbsp;=&nbsp;[[NSObject&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;@synchronized(obj)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(3);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;@synchronized(obj)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</pre><p>@synchronized(obj)指令使用的obj为该锁的唯一标识，只有当标识相同时，才为满足互斥，如果线程2中的@synchronized(obj)改为@synchronized(self),刚线程2就不会被阻塞，@synchronized指令实现锁的优点就是我们不需要在代码中显式的创建锁对象，便可以实现锁的机制，但作为一种预防措施，@synchronized块会隐式的添加一个异常处理例程来保护代码，该处理例程会在异常抛出的时候自动的释放互斥锁。所以如果不想让隐式的异常处理例程带来额外的开销，你可以考虑使用锁对象。</p><p>上面结果的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:48:35.747&nbsp;SafeMultiThread[35945:580107]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:48:38.748&nbsp;SafeMultiThread[35945:580107]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:48:38.749&nbsp;SafeMultiThread[35945:580118]&nbsp;需要线程同步的操作2</pre><p><strong>2.2、dispatch_semaphore</strong></p><pre class="brush:js;toolbar:false">dispatch_semaphore_t&nbsp;signal&nbsp;=&nbsp;dispatch_semaphore_create(1);<br>dispatch_time_t&nbsp;overTime&nbsp;=&nbsp;dispatch_time(DISPATCH_TIME_NOW,&nbsp;3&nbsp;</em>&nbsp;NSEC_PER_SEC);<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_wait(signal,&nbsp;overTime);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_signal(signal);<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_wait(signal,&nbsp;overTime);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_signal(signal);<br>});</pre><p>dispatch_semaphore是GCD用来同步的一种方式，与他相关的共有三个函数，分别是dispatch_semaphore_create，dispatch_semaphore_signal，dispatch_semaphore_wait。</p><p>（1）dispatch_semaphore_create的声明为：</p><pre class="brush:js;toolbar:false">dispatch_semaphore_t&nbsp;dispatch_semaphore_create(long&nbsp;value);</pre><p>传入的参数为long，输出一个dispatch_semaphore_t类型且值为value的信号量。</p><p>值得注意的是，这里的传入的参数value必须大于或等于0，否则dispatch_semaphore_create会返回NULL。</p><p>（2）dispatch_semaphore_signal的声明为：</p><pre class="brush:js;toolbar:false">long&nbsp;dispatch_semaphore_signal(dispatch_semaphore_t&nbsp;dsema);</pre><p>这个函数会使传入的信号量dsema的值加1；</p><p>(3) dispatch_semaphore_wait的声明为：</p><pre class="brush:js;toolbar:false">long&nbsp;dispatch_semaphore_wait(dispatch_semaphore_t&nbsp;dsema,&nbsp;dispatch_time_t&nbsp;timeout);</pre><p>这个函数会使传入的信号量dsema的值减1；这个函数的作用是这样的，如果dsema信号量的值大于0，该函数所处线程就继续执行下面的语句，并且将信号量的值减1；如果desema的值为0，那么这个函数就阻塞当前线程等待timeout（注意timeout的类型为dispatch_time_t，不能直接传入整形或float型数），如果等待的期间desema的值被dispatch_semaphore_signal函数加1了，且该函数（即dispatch_semaphore_wait）所处线程获得了信号量，那么就继续向下执行并将信号量减1。如果等待期间没有获取到信号量或者信号量的值一直为0，那么等到timeout时，其所处线程自动执行其后语句。</p><p>dispatch_semaphore 是信号量，但当信号总量设为 1 时也可以当作锁来。在没有等待情况出现时，它的性能比 pthread_mutex 还要高，但一旦有等待情况出现时，性能就会下降许多。相对于 OSSpinLock 来说，它的优势在于等待时不会消耗 CPU 资源。</p><p>如上的代码，如果超时时间overTime设置成&gt;2，可完成同步操作。如果overTime<2的话，在线程1还没有执行完成的情况下，此时超时了，将自动执行下面的代码。</p><p>上面代码的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:47:52.324&nbsp;SafeMultiThread[35945:579032]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:47:55.325&nbsp;SafeMultiThread[35945:579032]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:47:55.326&nbsp;SafeMultiThread[35945:579033]&nbsp;需要线程同步的操作2</pre><p>如果把超时时间设置为<2s的时候，执行的结果就是：</p><pre class="brush:js;toolbar:false">2016-06-30&nbsp;18:53:24.049&nbsp;SafeMultiThread[30834:434334]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-30&nbsp;18:53:25.554&nbsp;SafeMultiThread[30834:434332]&nbsp;需要线程同步的操作2<br>2016-06-30&nbsp;18:53:26.054&nbsp;SafeMultiThread[30834:434334]&nbsp;需要线程同步的操作1&nbsp;结束</pre><p><strong>2.3、NSLock</strong></p><pre class="brush:js;toolbar:false">NSLock&nbsp;<em>lock&nbsp;=&nbsp;[[NSLock&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;//[lock&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lockBeforeDate:[NSDate&nbsp;date]];<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([lock&nbsp;tryLock])&nbsp;{//尝试获取锁，如果获取不到返回NO，不会阻塞该线程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”锁可用的操作”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”锁不可用的操作”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;NSDate&nbsp;</em>date&nbsp;=&nbsp;[[NSDate&nbsp;alloc]&nbsp;initWithTimeIntervalSinceNow:3];<br>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([lock&nbsp;lockBeforeDate:date])&nbsp;{//尝试在未来的3s内获取锁，并阻塞该线程，如果3s内获取不到恢复线程,&nbsp;返回NO,不会阻塞该线程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”没有超时，获得锁”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”超时，没有获得锁”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</pre><p>NSLock是Cocoa提供给我们最基本的锁对象，这也是我们经常所使用的，除lock和unlock方法外，NSLock还提供了tryLock和lockBeforeDate:两个方法，前一个方法会尝试加锁，如果锁不可用(已经被锁住)，刚并不会阻塞线程，并返回NO。lockBeforeDate:方法会在所指定Date之前尝试加锁，如果在指定时间之前都不能加锁，则返回NO。</p><p>上面代码的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:45:08.864&nbsp;SafeMultiThread[35911:575795]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:45:09.869&nbsp;SafeMultiThread[35911:575781]&nbsp;锁不可用的操作<br>2016-06-29&nbsp;20:45:10.869&nbsp;SafeMultiThread[35911:575795]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:45:10.870&nbsp;SafeMultiThread[35911:575781]&nbsp;没有超时，获得锁</pre><p>源码定义如下：</p><pre class="brush:js;toolbar:false">@protocol&nbsp;NSLocking<br>-&nbsp;(void)lock;<br>-&nbsp;(void)unlock;<br>@end<br>@interface&nbsp;NSLock&nbsp;:&nbsp;NSObject&nbsp;&nbsp;{<br>@private<br>&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;<em>_priv;<br>}<br>-&nbsp;(BOOL)tryLock;<br>-&nbsp;(BOOL)lockBeforeDate:(NSDate&nbsp;</em>)limit;<br>@property&nbsp;(nullable,&nbsp;copy)&nbsp;NSString&nbsp;<em>name&nbsp;NS_AVAILABLE(10_5,&nbsp;2_0);<br>@end</pre><p><strong>2.4、NSRecursiveLock递归锁</strong></p><pre class="brush:js;toolbar:false">//NSLock&nbsp;</em>lock&nbsp;=&nbsp;[[NSLock&nbsp;alloc]&nbsp;init];<br>NSRecursiveLock&nbsp;*lock&nbsp;=&nbsp;[[NSRecursiveLock&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;void&nbsp;(^RecursiveMethod)(int);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod&nbsp;=&nbsp;^(int&nbsp;value)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(value&nbsp;&gt;&nbsp;0)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”value&nbsp;=&nbsp;%d”,&nbsp;value);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(value&nbsp;-&nbsp;1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(5);<br>});</pre><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/posts/47161/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1988,7 +1962,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2071,8 +2045,8 @@
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

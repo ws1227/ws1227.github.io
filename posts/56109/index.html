@@ -90,11 +90,13 @@
 
 
 <meta name="description" content="OC中有两个特殊的类方法，分别是load和initialize。本文总结一下这两个方法的区别于联系、使用场景和注意事项。Demo可以在我的Github上找到——load和initialize，如果觉得有帮助还望点个star以示支持，总结在文章末尾。load顾名思义，load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此">
+<meta name="keywords" content="面试题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OC中load方法和initialize方法的区别">
 <meta property="og:url" content="blog.51zan.cc/posts/56109/index.html">
 <meta property="og:site_name" content="一个精通猪肉炖粉条的程序猿">
 <meta property="og:description" content="OC中有两个特殊的类方法，分别是load和initialize。本文总结一下这两个方法的区别于联系、使用场景和注意事项。Demo可以在我的Github上找到——load和initialize，如果觉得有帮助还望点个star以示支持，总结在文章末尾。load顾名思义，load方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1171077-417e6180d36303a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:updated_time" content="2017-07-07T06:32:57.000Z">
 <meta name="twitter:card" content="summary">
@@ -454,7 +456,7 @@
 <p>+initialize</p>
 <p>与load不同的是，initialize方法不一定会执行。只有当一个类第一次被发送消息的时候会执行，注意是第一次。什么叫发送消息呢，就是执行类的一些方法的时候。也就是说这个方法是懒加载，没有用到这个类就不会调用，可以节省系统资源。</p>
 <p>还有一点截然相反，却更符合我们预期的就是，initialize方法会覆盖。也就是说如果子类实现了initialize方法，就不会执行父类的了，直接执行子类本身的。如果分类实现了initialize方法，也不会再执行主类的。所以initialize方法的执行覆盖顺序是 分类 -&gt; 子类 -&gt;类。且只会有一个initialize方法被执行。</p>
-<p><a href="http://www.jianshu.com/p/d25f691f0b07" target="_blank" rel="external">原文1</a>,<a href="http://blog.csdn.net/cloudox_/article/details/56005795" target="_blank" rel="external">原文2</a></p>
+<p><a href="http://www.jianshu.com/p/d25f691f0b07" target="_blank" rel="noopener">原文1</a>,<a href="http://blog.csdn.net/cloudox_/article/details/56005795" target="_blank" rel="noopener">原文2</a></p>
 
       
     </div>
@@ -606,7 +608,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -705,8 +707,8 @@
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

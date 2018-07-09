@@ -90,11 +90,13 @@
 
 
 <meta name="description" content="装饰器本质上是一个Python函数，它可以让其他函数在不需要做任何代码变动的前提下增加额外功能，装饰器的返回值也是一个函数对象。它经常用于有切面需求的场景，比如：插入日志、性能测试、事务处理、缓存、权限校验等场景。装饰器是解决这类问题的绝佳设计，有了装饰器，我们就可以抽离出大量与函数功能本身无关的雷同代码并继续重用。概括的讲，装饰器的作用就是为已经存在的对象添加额外的功能如下边例子 w1函数是一个">
+<meta name="keywords" content="Python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python装饰器的简单理解">
 <meta property="og:url" content="blog.51zan.cc/posts/30847/index.html">
 <meta property="og:site_name" content="一个精通猪肉炖粉条的程序猿">
 <meta property="og:description" content="装饰器本质上是一个Python函数，它可以让其他函数在不需要做任何代码变动的前提下增加额外功能，装饰器的返回值也是一个函数对象。它经常用于有切面需求的场景，比如：插入日志、性能测试、事务处理、缓存、权限校验等场景。装饰器是解决这类问题的绝佳设计，有了装饰器，我们就可以抽离出大量与函数功能本身无关的雷同代码并继续重用。概括的讲，装饰器的作用就是为已经存在的对象添加额外的功能如下边例子 w1函数是一个">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-11-08T09:41:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python装饰器的简单理解">
@@ -452,7 +454,7 @@
 <p>打印<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">---func--1--</div><div class="line">---func--2--</div><div class="line">---func_in--1---</div><div class="line">----test---</div><div class="line">test返回值 haha</div><div class="line">---func--1--</div><div class="line">---func--2--</div><div class="line">---func_in--1---</div><div class="line">----test1=10---</div><div class="line">test1返回值 hahatest1</div><div class="line">---func--1--</div><div class="line">---func--2--</div><div class="line">---func_in--1---</div><div class="line">----test2---</div><div class="line">test2返回值 None</div><div class="line">---func--1--</div><div class="line">---func--2--</div><div class="line">---func_in--1---</div><div class="line">----test3=3---</div><div class="line">None</div></pre></td></tr></table></figure></p>
 <h5 id="装饰器带有参数"><a href="#装饰器带有参数" class="headerlink" title="装饰器带有参数"></a>装饰器带有参数</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">func_arg</span><span class="params">(arg)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">func</span><span class="params">(funcName)</span>:</span></div><div class="line">        <span class="function"><span class="keyword">def</span> <span class="title">func_in</span><span class="params">()</span>:</span></div><div class="line">            <span class="keyword">if</span> arg == <span class="string">"嘿嘿"</span>:</div><div class="line">                print(<span class="string">"嘿嘿记录日志 %s"</span> % arg)</div><div class="line">                funcName()</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                print(<span class="string">"哈哈记录日志 %s"</span> % arg)</div><div class="line">                funcName()</div><div class="line">        <span class="keyword">return</span>  func_in</div><div class="line">    <span class="keyword">return</span> func</div><div class="line"><span class="comment">#先执行func_arg("heihei")函数，返回的是func函数的引用然后就是使用@func就行装饰</span></div><div class="line"><span class="meta">@func_arg("哈哈")</span></div><div class="line"><span class="comment">#无参数有返回值</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">"----test---"</span>)</div><div class="line">test()</div><div class="line"></div><div class="line"><span class="meta">@func_arg("嘿嘿")</span></div><div class="line"><span class="comment">#无参数有返回值</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">test2</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">"----test2---"</span>)</div><div class="line">test2()</div></pre></td></tr></table></figure>
 <p>打印<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">哈哈记录日志 哈哈</div><div class="line">----test---</div><div class="line">嘿嘿记录日志 嘿嘿</div><div class="line">----test2---</div></pre></td></tr></table></figure></p>
-<p>更多理解可以参考<a href="http://python.jobbole.com/82344/" target="_blank" rel="external">http://python.jobbole.com/82344/</a><br><a href="https://www.zhihu.com/question/26930016" target="_blank" rel="external">https://www.zhihu.com/question/26930016</a><br>视频教程链接: <a href="https://pan.baidu.com/s/1eR403LK" target="_blank" rel="external">https://pan.baidu.com/s/1eR403LK</a> 密码: rmqj</p>
+<p>更多理解可以参考<a href="http://python.jobbole.com/82344/" target="_blank" rel="noopener">http://python.jobbole.com/82344/</a><br><a href="https://www.zhihu.com/question/26930016" target="_blank" rel="noopener">https://www.zhihu.com/question/26930016</a><br>视频教程链接: <a href="https://pan.baidu.com/s/1eR403LK" target="_blank" rel="noopener">https://pan.baidu.com/s/1eR403LK</a> 密码: rmqj</p>
 
       
     </div>
@@ -604,7 +606,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -703,8 +705,8 @@
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

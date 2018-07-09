@@ -95,6 +95,7 @@
 <meta property="og:url" content="blog.51zan.cc/page/2/index.html">
 <meta property="og:site_name" content="一个精通猪肉炖粉条的程序猿">
 <meta property="og:description" content="王森技术博客作为个人博客，主要记录技术文档涉及iOS等多个语言平台，王森博客-可怜的程序猿记录的一个精通猪肉炖粉条的程序猿博客">
+<meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个精通猪肉炖粉条的程序猿">
 <meta name="twitter:description" content="王森技术博客作为个人博客，主要记录技术文档涉及iOS等多个语言平台，王森博客-可怜的程序猿记录的一个精通猪肉炖粉条的程序猿博客">
@@ -324,6 +325,164 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/47161/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="王森">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一个精通猪肉炖粉条的程序猿">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/posts/47161/" itemprop="url">
+                  iOS线程安全篇
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-17T15:52:14+08:00">
+                2017-05-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/OC/" itemprop="url" rel="index">
+                    <span itemprop="name">OC</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/posts/47161/" class="leancloud_visitors" data-flag-title="iOS线程安全篇">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><strong>一、前言</strong></p><p>前段时间看了几个开源项目，发现他们保持线程同步的方式各不相同，有@synchronized、NSLock、dispatch_semaphore、NSCondition、pthread_mutex、OSSpinLock。后来网上查了一下，发现他们的实现机制各不相同，性能也各不一样。不好意思，我们平常使用最多的@synchronized是性能最差的。下面我们先分别介绍每个加锁方式的使用，在使用一个案例来对他们进行性能对比。</p><p><span style="color: rgb(0, 176, 80);"><strong>二、介绍与使用</strong></span></p><p><strong>2.1、@synchronized</strong></p><pre class="brush:js;toolbar:false">NSObject&nbsp;<em>obj&nbsp;=&nbsp;[[NSObject&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;@synchronized(obj)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(3);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;@synchronized(obj)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</em></pre><p>@synchronized(obj)指令使用的obj为该锁的唯一标识，只有当标识相同时，才为满足互斥，如果线程2中的@synchronized(obj)改为@synchronized(self),刚线程2就不会被阻塞，@synchronized指令实现锁的优点就是我们不需要在代码中显式的创建锁对象，便可以实现锁的机制，但作为一种预防措施，@synchronized块会隐式的添加一个异常处理例程来保护代码，该处理例程会在异常抛出的时候自动的释放互斥锁。所以如果不想让隐式的异常处理例程带来额外的开销，你可以考虑使用锁对象。</p><p>上面结果的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:48:35.747&nbsp;SafeMultiThread[35945:580107]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:48:38.748&nbsp;SafeMultiThread[35945:580107]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:48:38.749&nbsp;SafeMultiThread[35945:580118]&nbsp;需要线程同步的操作2</pre><p><strong>2.2、dispatch_semaphore</strong></p><pre class="brush:js;toolbar:false">dispatch_semaphore_t&nbsp;signal&nbsp;=&nbsp;dispatch_semaphore_create(1);<br>dispatch_time_t&nbsp;overTime&nbsp;=&nbsp;dispatch_time(DISPATCH_TIME_NOW,&nbsp;3&nbsp;&nbsp;NSEC_PER_SEC);<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_wait(signal,&nbsp;overTime);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_signal(signal);<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_wait(signal,&nbsp;overTime);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作2”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dispatch_semaphore_signal(signal);<br>});</pre><p>dispatch_semaphore是GCD用来同步的一种方式，与他相关的共有三个函数，分别是dispatch_semaphore_create，dispatch_semaphore_signal，dispatch_semaphore_wait。</p><p>（1）dispatch_semaphore_create的声明为：</p><pre class="brush:js;toolbar:false">dispatch_semaphore_t&nbsp;dispatch_semaphore_create(long&nbsp;value);</pre><p>传入的参数为long，输出一个dispatch_semaphore_t类型且值为value的信号量。</p><p>值得注意的是，这里的传入的参数value必须大于或等于0，否则dispatch_semaphore_create会返回NULL。</p><p>（2）dispatch_semaphore_signal的声明为：</p><pre class="brush:js;toolbar:false">long&nbsp;dispatch_semaphore_signal(dispatch_semaphore_t&nbsp;dsema);</pre><p>这个函数会使传入的信号量dsema的值加1；</p><p>(3) dispatch_semaphore_wait的声明为：</p><pre class="brush:js;toolbar:false">long&nbsp;dispatch_semaphore_wait(dispatch_semaphore_t&nbsp;dsema,&nbsp;dispatch_time_t&nbsp;timeout);</pre><p>这个函数会使传入的信号量dsema的值减1；这个函数的作用是这样的，如果dsema信号量的值大于0，该函数所处线程就继续执行下面的语句，并且将信号量的值减1；如果desema的值为0，那么这个函数就阻塞当前线程等待timeout（注意timeout的类型为dispatch_time_t，不能直接传入整形或float型数），如果等待的期间desema的值被dispatch_semaphore_signal函数加1了，且该函数（即dispatch_semaphore_wait）所处线程获得了信号量，那么就继续向下执行并将信号量减1。如果等待期间没有获取到信号量或者信号量的值一直为0，那么等到timeout时，其所处线程自动执行其后语句。</p><p>dispatch_semaphore 是信号量，但当信号总量设为 1 时也可以当作锁来。在没有等待情况出现时，它的性能比 pthread_mutex 还要高，但一旦有等待情况出现时，性能就会下降许多。相对于 OSSpinLock 来说，它的优势在于等待时不会消耗 CPU 资源。</p><p>如上的代码，如果超时时间overTime设置成&gt;2，可完成同步操作。如果overTime<2的话，在线程1还没有执行完成的情况下，此时超时了，将自动执行下面的代码。< p=""><p>上面代码的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:47:52.324&nbsp;SafeMultiThread[35945:579032]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:47:55.325&nbsp;SafeMultiThread[35945:579032]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:47:55.326&nbsp;SafeMultiThread[35945:579033]&nbsp;需要线程同步的操作2</pre><p>如果把超时时间设置为<2s的时候，执行的结果就是：< p=""><pre class="brush:js;toolbar:false">2016-06-30&nbsp;18:53:24.049&nbsp;SafeMultiThread[30834:434334]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-30&nbsp;18:53:25.554&nbsp;SafeMultiThread[30834:434332]&nbsp;需要线程同步的操作2<br>2016-06-30&nbsp;18:53:26.054&nbsp;SafeMultiThread[30834:434334]&nbsp;需要线程同步的操作1&nbsp;结束</pre><p><strong>2.3、NSLock</strong></p><pre class="brush:js;toolbar:false">NSLock&nbsp;<em>lock&nbsp;=&nbsp;[[NSLock&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;//[lock&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lockBeforeDate:[NSDate&nbsp;date]];<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;开始”);<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);<br>&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”需要线程同步的操作1&nbsp;结束”);<br>&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>});<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([lock&nbsp;tryLock])&nbsp;{//尝试获取锁，如果获取不到返回NO，不会阻塞该线程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”锁可用的操作”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”锁不可用的操作”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;NSDate&nbsp;</em>date&nbsp;=&nbsp;[[NSDate&nbsp;alloc]&nbsp;initWithTimeIntervalSinceNow:3];<br>&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;([lock&nbsp;lockBeforeDate:date])&nbsp;{//尝试在未来的3s内获取锁，并阻塞该线程，如果3s内获取不到恢复线程,&nbsp;返回NO,不会阻塞该线程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”没有超时，获得锁”);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;}else{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”超时，没有获得锁”);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>});</pre><p>NSLock是Cocoa提供给我们最基本的锁对象，这也是我们经常所使用的，除lock和unlock方法外，NSLock还提供了tryLock和lockBeforeDate:两个方法，前一个方法会尝试加锁，如果锁不可用(已经被锁住)，刚并不会阻塞线程，并返回NO。lockBeforeDate:方法会在所指定Date之前尝试加锁，如果在指定时间之前都不能加锁，则返回NO。</p><p>上面代码的执行结果为：</p><pre class="brush:js;toolbar:false">2016-06-29&nbsp;20:45:08.864&nbsp;SafeMultiThread[35911:575795]&nbsp;需要线程同步的操作1&nbsp;开始<br>2016-06-29&nbsp;20:45:09.869&nbsp;SafeMultiThread[35911:575781]&nbsp;锁不可用的操作<br>2016-06-29&nbsp;20:45:10.869&nbsp;SafeMultiThread[35911:575795]&nbsp;需要线程同步的操作1&nbsp;结束<br>2016-06-29&nbsp;20:45:10.870&nbsp;SafeMultiThread[35911:575781]&nbsp;没有超时，获得锁</pre><p>源码定义如下：</p><pre class="brush:js;toolbar:false">@protocol&nbsp;NSLocking<br>-&nbsp;(void)lock;<br>-&nbsp;(void)unlock;<br>@end<br>@interface&nbsp;NSLock&nbsp;:&nbsp;NSObject&nbsp;&nbsp;{<br>@private<br>&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;<em>_priv;<br>}<br>-&nbsp;(BOOL)tryLock;<br>-&nbsp;(BOOL)lockBeforeDate:(NSDate&nbsp;</em>)limit;<br>@property&nbsp;(nullable,&nbsp;copy)&nbsp;NSString&nbsp;<em>name&nbsp;NS_AVAILABLE(10_5,&nbsp;2_0);<br>@end</em></pre><p><strong>2.4、NSRecursiveLock递归锁</strong></p><pre class="brush:js;toolbar:false">//NSLock&nbsp;lock&nbsp;=&nbsp;[[NSLock&nbsp;alloc]&nbsp;init];<br>NSRecursiveLock&nbsp;*lock&nbsp;=&nbsp;[[NSRecursiveLock&nbsp;alloc]&nbsp;init];<br>dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,&nbsp;0),&nbsp;^{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;void&nbsp;(^RecursiveMethod)(int);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod&nbsp;=&nbsp;^(int&nbsp;value)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;lock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(value&nbsp;&gt;&nbsp;0)&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NSLog(@”value&nbsp;=&nbsp;%d”,&nbsp;value);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(value&nbsp;-&nbsp;1);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[lock&nbsp;unlock];<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RecursiveMethod(5);<br>});</pre><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/posts/47161/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/13633/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -411,8 +570,8 @@
 
       
         
-          <p><h1>一、前言：</h1></p>
-<p>如果你没有Objective-C基础，请学习了基础的iOS开发再来，这个1小时是给有一定iOS基础的童鞋的。如果你是大牛或者你感觉Objective-C Runtime太简单不用1小时学习的，也请您绕道，这或许只是我的私人笔记了。</p><br><p><font color="red">请跟着教程“一步步来”，请不要大概地扫两眼就说看不懂——以这种态度写成什么样你也看不懂。这是<b>1小时入门教程，请不要试图在1分钟内入门！</font></p><br><h1>二、本文目标：</h1><br><p>1小时让你知道什么是Objective-C Runtime，并对它有一定的基本了解，可以在开发过程中运用自如。</p><br><h1>三、Objective-C Runtime到底是什么东西？</h1><br><p>简而言之，Objective-C Runtime是一个将C语言转化为面向对象语言的扩展。<br /><br>我们将C++和Objective进行对比，虽然C++和Objective-C都是在C的基础上加入面向对象的特性扩充而成的程序设计语言，但二者实现的机制差异很大。C++是基于静态类型，而Objective-C是基于动态运行时类型。<s>也就是说用C++编写的程序编译时就直接编译成了可令机器读懂的机器语言；用Objective-C编写的程序不能直接编译成可令机器读懂的机器语言，而是在程序运行的时候，通过Runtime把程序转为可令机器读懂的机器语言。</s>也就是说用C++编写的程序通过编译器直接把函数地址硬编码进入可执行文件；而Objective-C无法通过编译器直接把函数地址硬编码进入可执行文件，而是在程序运行的时候，利用Runtime根据条件判断作出决定。函数标识与函数过程的真正内容之间的关联可以动态修改。Runtime是Objective不可缺少的重要一部分。</p><br><p>传送门-&gt;<a rel="external nofollow" href="https://github.com/ianisme/IANRuntimeStudy/tree/master/objc-runtime%E6%BA%90%E7%A0%81" target="_blank">runtime源码</a></p><br><h1>四、Objective-C的元素认知</h1><br><h2>4.1 id和Class</h2><br><p>打开/Public Headers/objc.h文件可以看到如下定义：</p><br><pre><code>#if !OBJC_TYPES_DEFINED<br>/// An opaque type that represents an Objective-C class.<br>typedef struct objc_class <em>Class;<br><br>/// Represents an instance of a class.<br>struct objc_object {<br>Class isa  OBJC_ISA_AVAILABILITY;<br>};<br><br>/// A pointer to an instance of a class.<br>typedef struct objc_object </em>id;<br>#endif<br></code></pre><br><p>Class是一个指向objc_class结构体的指针，而id是一个指向objc_object结构体的指针，其中的isa是一个指向objc_class结构体的指针。其中的id就是我们所说的对象，Class就是我们所说的类。</p><br><p>打开/Public Headers/runtime.h文件<br /><br>objc_class的定义如下：</p><br><pre><code>typedef struct objc_class <em>Class;<br>struct objc_class {<br>Class isa                                 OBJC_ISA_AVAILABILITY; // metaclass<br>#if !<strong>OBJC2</strong><br>Class super_class                         OBJC2_UNAVAILABLE; // 父类<br>const char </em>name                          OBJC2_UNAVAILABLE; // 类名<br>long version                              OBJC2_UNAVAILABLE; // 类的版本信息，默认为0，可以通过runtime函数class_setVersion或者class_getVersion进行修改、读取<br>long info                                 OBJC2_UNAVAILABLE; // 类信息，供运行时期使用的一些位标识，如CLS_CLASS (0x1L) 表示该类为普通 class，其中包含实例方法和变量;CLS_META (0x2L) 表示该类为 metaclass，其中包含类方法;<br>long instance_size                        OBJC2_UNAVAILABLE; // 该类的实例变量大小（包括从父类继承下来的实例变量）<br>struct objc_ivar_list <em>ivars              OBJC2_UNAVAILABLE; // 该类的成员变量地址列表<br>struct objc_method_list **methodLists     OBJC2_UNAVAILABLE; // 方法地址列表，与 info 的一些标志位有关，如CLS_CLASS (0x1L)，则存储实例方法，如CLS_META (0x2L)，则存储类方法;<br>struct objc_cache </em>cache                  OBJC2_UNAVAILABLE; // 缓存最近使用的方法地址，用于提升效率；<br>struct objc_protocol_list <em>protocols      OBJC2_UNAVAILABLE; // 存储该类声明遵守的协议的列表<br>#endif<br>}<br>/</em> Use <code>Class</code> instead of <code>struct objc_class *</code> <em>/<br></code></pre><br>
+          <p></p><h1>一、前言：</h1><p></p>
+<p>如果你没有Objective-C基础，请学习了基础的iOS开发再来，这个1小时是给有一定iOS基础的童鞋的。如果你是大牛或者你感觉Objective-C Runtime太简单不用1小时学习的，也请您绕道，这或许只是我的私人笔记了。</p><br><p><font color="red">请跟着教程“一步步来”，请不要大概地扫两眼就说看不懂——以这种态度写成什么样你也看不懂。这是<b>1小时入门教程，请不要试图在1分钟内入门！</b></font></p><br><h1>二、本文目标：</h1><br><p>1小时让你知道什么是Objective-C Runtime，并对它有一定的基本了解，可以在开发过程中运用自如。</p><br><h1>三、Objective-C Runtime到底是什么东西？</h1><br><p>简而言之，Objective-C Runtime是一个将C语言转化为面向对象语言的扩展。<br><br>我们将C++和Objective进行对比，虽然C++和Objective-C都是在C的基础上加入面向对象的特性扩充而成的程序设计语言，但二者实现的机制差异很大。C++是基于静态类型，而Objective-C是基于动态运行时类型。<s>也就是说用C++编写的程序编译时就直接编译成了可令机器读懂的机器语言；用Objective-C编写的程序不能直接编译成可令机器读懂的机器语言，而是在程序运行的时候，通过Runtime把程序转为可令机器读懂的机器语言。</s>也就是说用C++编写的程序通过编译器直接把函数地址硬编码进入可执行文件；而Objective-C无法通过编译器直接把函数地址硬编码进入可执行文件，而是在程序运行的时候，利用Runtime根据条件判断作出决定。函数标识与函数过程的真正内容之间的关联可以动态修改。Runtime是Objective不可缺少的重要一部分。</p><br><p>传送门-&gt;<a rel="external nofollow" href="https://github.com/ianisme/IANRuntimeStudy/tree/master/objc-runtime%E6%BA%90%E7%A0%81" target="_blank">runtime源码</a></p><br><h1>四、Objective-C的元素认知</h1><br><h2>4.1 id和Class</h2><br><p>打开/Public Headers/objc.h文件可以看到如下定义：</p><br><pre><code>#if !OBJC_TYPES_DEFINED<br>/// An opaque type that represents an Objective-C class.<br>typedef struct objc_class <em>Class;<br><br>/// Represents an instance of a class.<br>struct objc_object {<br>Class isa  OBJC_ISA_AVAILABILITY;<br>};<br><br>/// A pointer to an instance of a class.<br>typedef struct objc_object </em>id;<br>#endif<br></code></pre><br><p>Class是一个指向objc_class结构体的指针，而id是一个指向objc_object结构体的指针，其中的isa是一个指向objc_class结构体的指针。其中的id就是我们所说的对象，Class就是我们所说的类。</p><br><p>打开/Public Headers/runtime.h文件<br><br>objc_class的定义如下：</p><br><pre><code>typedef struct objc_class <em>Class;<br>struct objc_class {<br>Class isa                                 OBJC_ISA_AVAILABILITY; // metaclass<br>#if !<strong>OBJC2</strong><br>Class super_class                         OBJC2_UNAVAILABLE; // 父类<br>const char </em>name                          OBJC2_UNAVAILABLE; // 类名<br>long version                              OBJC2_UNAVAILABLE; // 类的版本信息，默认为0，可以通过runtime函数class_setVersion或者class_getVersion进行修改、读取<br>long info                                 OBJC2_UNAVAILABLE; // 类信息，供运行时期使用的一些位标识，如CLS_CLASS (0x1L) 表示该类为普通 class，其中包含实例方法和变量;CLS_META (0x2L) 表示该类为 metaclass，其中包含类方法;<br>long instance_size                        OBJC2_UNAVAILABLE; // 该类的实例变量大小（包括从父类继承下来的实例变量）<br>struct objc_ivar_list <em>ivars              OBJC2_UNAVAILABLE; // 该类的成员变量地址列表<br>struct objc_method_list **methodLists     OBJC2_UNAVAILABLE; // 方法地址列表，与 info 的一些标志位有关，如CLS_CLASS (0x1L)，则存储实例方法，如CLS_META (0x2L)，则存储类方法;<br>struct objc_cache </em>cache                  OBJC2_UNAVAILABLE; // 缓存最近使用的方法地址，用于提升效率；<br>struct objc_protocol_list <em>protocols      OBJC2_UNAVAILABLE; // 存储该类声明遵守的协议的列表<br>#endif<br>}<br>/</em> Use <code>Class</code> instead of <code>struct objc_class *</code> <em>/<br></em></code></pre><br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/posts/13633/#more" rel="contents">
@@ -573,14 +732,14 @@
           
             <p>Swift使用OC框架</p>
 <h4 id="场景一：使用Cocopods导入框架"><a href="#场景一：使用Cocopods导入框架" class="headerlink" title="场景一：使用Cocopods导入框架"></a>场景一：使用Cocopods导入框架</h4><p>看以前的教程用Cocopods导入框架也要手动设置桥接文件，我最近创建的项目用Cocopods安装的<code>SDWebImage</code>和<code>SVProgressHUD</code>发现xcode会自动生成一个桥接的.h文件名字是<code>Targets-Bridging-Header.h</code>,并且会自动设置路径如图，这个稍后在场景2再继续介绍<br><img src="http://upload-images.jianshu.io/upload_images/1177260-81dbb05fa1c972fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"></p>
-<p>用Cocopods导入的OC框架Xcode会自动生成一个文件但是我并不能在本地找到他，看SDWebImage的这个文件如下<br><a href="http://photozou.jp/photo/show/3167534/247718546" target="_blank" rel="external"><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718546.v1494470486.jpg" alt="SDWebImage" width="450" height="279"></a><br><br>在使用的过程中直接用<code>import SDWebImage</code>就可以使用<code> SDWebImage</code>的各种方法了<br>这种由Cocopods导入的框架都会生成这个类似的文件不用在桥接文件有引入头文件类似<code>#import “UIImageView+WebCache.h”</code>.</p>
+<p>用Cocopods导入的OC框架Xcode会自动生成一个文件但是我并不能在本地找到他，看SDWebImage的这个文件如下<br><a href="http://photozou.jp/photo/show/3167534/247718546" target="_blank" rel="noopener"><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718546.v1494470486.jpg" alt="SDWebImage" width="450" height="279"></a><br><br>在使用的过程中直接用<code>import SDWebImage</code>就可以使用<code> SDWebImage</code>的各种方法了<br>这种由Cocopods导入的框架都会生成这个类似的文件不用在桥接文件有引入头文件类似<code>#import “UIImageView+WebCache.h”</code>.</p>
 <h4 id="场景二：没有使用Cocopods或者使用Cocopods手动导入框架"><a href="#场景二：没有使用Cocopods或者使用Cocopods手动导入框架" class="headerlink" title="场景二：没有使用Cocopods或者使用Cocopods手动导入框架"></a>场景二：没有使用Cocopods或者使用Cocopods手动导入框架</h4><p>没有使用Cocopods就需要自己新建一个桥接文件了当然如果用了Cocopods可以使用Xcode自动生成的就是场景一的那种情况了,下图新建一个桥接文件命名随意这里的图是用别人的真是随意了啊，我建议命名规则可以按照<code>Targets-Bridging-Header.h</code>毕竟这样看起来正规点嘛<br><img src="http://upload-images.jianshu.io/upload_images/1177260-f4d50e12169a4794.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br>填好文件名字,选中语言为Objective-C,点击Next</p>
 <p>这个时候回出现一个弹框,意思就是 你是否想要配置一个OC桥接文件,选择创建<br><img src="http://upload-images.jianshu.io/upload_images/1177260-9cd0d85912e6e2d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description">，路径可以按照场景一的图找到就不再上图了。这里强调一个重要设置<br><br>注意、注意、注意<br><br>重要的事情说三遍嘛<br><br>1.选择target（就是左边你的工程target）—— BuildSettings —— search Paths 下的 User Header Search Paths</p>
 <p>2.双击后面的空白区域，并且点击“+”号添加一项：并且输入：“$(PODS_ROOT)”（没有引号），选择：recursive（会在相应的目录递归搜索文件）。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/1177260-a0874a70ce8d4722.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br><br><img src="http://upload-images.jianshu.io/upload_images/1177260-f069f467c1d2d028.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image description"><br><br>这个设置完才可以保证在桥接文件里能够正常引用OC库</p>
 <p>一切设置妥当就可以手动拖入OC库了，举个例子我用的<code>Toast</code></p>
 <p><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718829.v1494471880.jpg" alt="王森博客，Swift使用OC框架" width="450" height="218"><br></p>
-<p><a href="http://photozou.jp/photo/show/3167534/247718892" target="_blank" rel="external"><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718892.v1494472099.jpg" alt="10C510A6-B0F0-4E48-B87C-5376FC98A58D" width="450" height="194"></a><br><br>愉快使用OC和Swift的混编吧</p>
+<p><a href="http://photozou.jp/photo/show/3167534/247718892" target="_blank" rel="noopener"><img src="http://art13.photozou.jp/pub/534/3167534/photo/247718892.v1494472099.jpg" alt="10C510A6-B0F0-4E48-B87C-5376FC98A58D" width="450" height="194"></a><br><br>愉快使用OC和Swift的混编吧</p>
 
           
         
@@ -734,7 +893,7 @@
       
         
           <p>OC中有两个特殊的类方法，分别是<code>load</code>和<code>initialize</code>。本文总结一下这两个方法的区别于联系、使用场景和注意事项。Demo可以在我的Github上找到——<a href="https://github.com/ws1227/MySampleCoe" target="_blank">load和initialize</a>，如果觉得有帮助还望点个star以示支持，总结在文章末尾。</p><br><h1>load</h1><br><p>顾名思义，<code>load</code>方法在这个文件被程序装载时调用。只要是在Compile Sources中出现的文件总是会被装载，这与这个类是否被用到无关，因此<code>load</code>方法总是在<code>main</code>函数之前调用。</p><br><h3>调用规则</h3><br><p>如果一个类实现了<code>load</code>方法，在调用这个方法前会首先调用父类的<code>load</code>方法。而且这个过程是自动完成的，并不需要我们手动实现：<br><br><pre><code class="objc">// In Parent.m<br>+ (void)load {<br>    NSLog(@”Load Class Parent”);<br>}<br><br>// In Child.m，继承自Parent<br>+ (void)load {<br>    NSLog(@”Load Class Child”);<br>}<br><br>// In Child+load.m，Child类的分类<br>+ (void)load {<br>    NSLog(@”Load Class Child+load”);<br>}<br><br>// 运行结果：<br>/<em><br>    2016-02-01 21:28:14.379 load[11789:1435378] Load Class Parent<br>    2016-02-01 21:28:14.380 load[11789:1435378] Load Class Child<br>    2016-02-01 22:28:14.381 load[11789:1435378] Load Class Child+load
-</em>/</code></pre><br><br><p>如果一个类没有实现<code>load</code>方法，那么就不会调用它父类的<code>load</code>方法，这一点与正常的类继承和方法调用不一样，需要额外注意一下。</p><br><h3>执行顺序</h3><br><p><code>load</code>方法调用时，系统处于脆弱状态，如果调用别的类的方法，且该方法依赖于那个类的<code>load</code>方法进行初始化设置，那么必须确保那个类的<code>load</code>方法已经调用了，比如demo中的这段代码，打印出的字符串就为<code>null</code>：</p>
+</em>/</code></pre><br><br></p><p>如果一个类没有实现<code>load</code>方法，那么就不会调用它父类的<code>load</code>方法，这一点与正常的类继承和方法调用不一样，需要额外注意一下。</p><br><h3>执行顺序</h3><br><p><code>load</code>方法调用时，系统处于脆弱状态，如果调用别的类的方法，且该方法依赖于那个类的<code>load</code>方法进行初始化设置，那么必须确保那个类的<code>load</code>方法已经调用了，比如demo中的这段代码，打印出的字符串就为<code>null</code>：</p>
 
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">// In Child.m</div><div class="line">+ (void)load &#123;</div><div class="line">    NSLog(@&quot;Load Class Child&quot;);</div><div class="line"></div><div class="line">    Other *other = [Other new];</div><div class="line">    [other originalFunc];</div><div class="line">   </div><div class="line">    // 如果不先调用other的load，下面这行代码就无效，打印出null</div><div class="line">    [Other printName];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
@@ -1054,7 +1213,7 @@
 <h6 id="2-添加域名到-Capabilities"><a href="#2-添加域名到-Capabilities" class="headerlink" title="2.添加域名到 Capabilities"></a>2.添加域名到 Capabilities</h6><p>首先, 你必须在 Xcode 的 capabilities 里 添加你的 APP 域名, 必须用 applinks: 前置它：还添加一些你可能拥有的子域和扩展（www.domain.com, news.domain.com 等等）。</p>
 <p><img src="http://cc.cocimg.com/api/uploads/20150902/1441166240882211.png" alt="用 applinks: 前缀添加所有域名, 同时不要忘了包含所有可能需要的子域名"></p>
 <p>用applinks: 前缀添加所有域名, 同时不要忘了包含所有可能需要的子域名</p>
-<p>这将使你的 APP 从你的域名请求一个特殊的 JSON 文件 apple-app-site-association。当你第一次启动 APP，它会从 <a href="https://domain.com/apple-app-site-association">https://domain.com/apple-app-site-association</a> 下载这个文件。跳到下个步骤来了解如何构建这个文件。</p>
+<p>这将使你的 APP 从你的域名请求一个特殊的 JSON 文件 apple-app-site-association。当你第一次启动 APP，它会从 <a href="https://domain.com/apple-app-site-association" target="_blank" rel="noopener">https://domain.com/apple-app-site-association</a> 下载这个文件。跳到下个步骤来了解如何构建这个文件。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/posts/28111/#more" rel="contents">
@@ -1532,7 +1691,7 @@
       
         
           <hr>
-<div class="clear"></div><br>            <div id="cnblogs_post_body"><p>　　今天的博客算是比较基础的，还是那句话，基础这东西在什么时候都是最重要的。说到函数，只要是写过程序就肯定知道函数是怎么回事，今天就来讨论一下Swift中的函数的特性以及Swift中的闭包。今天的一些小实例中回类比一下Objective-C中的函数的写法等等。Swift中的函数还是有许多好用的特性的，比如输入参数，使用元组返回多个值， 定义形参名，设定默认参数以及可变参数等等一些好用的特性。而在Swift中的闭包就是Objective-C中的Block, 除了语法不通外，两者的用法是一样的。废话少说，开始今天的主题，先搞一搞Swift中的函数，然后在搞一搞Swift中的闭包。</p><br><p><span style="color: #008000; font-size: 18px;">　　一.Swift中的函数</span></p><br><p>　　　　1. 函数的定义与使用</p><br><p>　　　　　在介绍Swift中的函数之前，我想用Objective-C中的一个简单的加法函数来作为引子，然后类比着实现一下Swift中相同功能的函数。关于函数定义就比较简单了，就是一些语法的东西，下面的代码片段是Objc中求两个整数之和的函数，并返回两个数的和。</p><br><div class="cnblogs_code"><br><pre>-<span style="color: #000000;"> (NSInteger)sumNumber1:(NSInteger) number1<br>                number2:(NSInteger) number2 {<br>    </span><span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br>}</span></pre><br></div><br><p>　　　　函数的功能比较简单了，就是把两个整数传进来，然后返回两个整数的和。接下来将用Swift语言实现，也好通过这个实例来熟悉一下Swift语言中定义函数的语法。下方是Swift语言中求两个整数之和的函数。语法比较简单了，在Swift中定义函数，我们会使用到关键字<span style="color: #ff6600;">func</span>来声明函数。</p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> <span style="color: #008000;">//</span><span style="color: #008000;">函数定义</span><br><span style="color: #008080;">2</span> func sum (number1:Int, number2:Int) -&gt;<span style="color: #000000;"> Int{<br></span><span style="color: #008080;">3</span>     <span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br></span><span style="color: #008080;">4</span> }</pre><br></div><br><p>　　　　用文字来描述Swift定义基本函数的语法就是:<span style="color: #ff6600;"> func <span style="color: #008000;">函数名</span> （形参<span style="color: #008000;">列表</span>） -&gt; <span style="color: #008000;">返回值类型</span> { <span style="color: #008000;">函数体</span>}，<span style="color: #000000;">这样你就可以定义一个函数了。当然，函数定义时还有好多其他的用法，下面会详细介绍。上面函数的调用方法如下：</span></span></p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> let sumTwoNubmer = sum(<span style="color: #800080;">2</span>, number2: <span style="color: #800080;">3</span>);</pre><br></div><br><p>&nbsp;</p><br><p>　　　　2. 函数中的形参列表</p><br><p>　　　　关于函数中的形参列表还是有必要提上一嘴的，因为形参列表作为函数数据源之一，所以把参数列表好好的搞一搞还是很有必要的。参数列表也有很多好用的使用方式，接下来详细的介绍一下函数的形参列表。</p><br><p>　　　　(1) 默认的形参是常量（let）</p><br><p>　　　　　　在函数的形参列表中，默认的形参是常量。也就是相当于用<span style="color: #ff6600;">let</span>关键字对形参进行修饰了。我们可以做个试验，把上面加法函数做一个修改，在加法函数中对number1进行加1操作，你会得到一个错误，这个错误的大体意思就是&ldquo;number1是不可被修改的，因为它是let类型的常量&rdquo;。并且编译器还给人出了Fix-it（修复）的方案，就是在number1前面使用<span style="color: #ff6600;">var</span>关键字进行修饰，使其成为变量，这样才可以修改其值。</p><br><p>　　　　　　上面说这么多，一句话：形参默认是常量，如果你想让其是变量，那么你可以使用var关键字进行修饰，这样被关键字var修饰的变量在函数中就可以被修改。下方就是报的这个错误，和编译器提供的解决方案。（在Objc中默认可以在函数中改变形参的值）</p><br><p><img style="display: block; margin-left: auto; margin-right: auto;" src="http://images2015.cnblogs.com/blog/545446/201511/545446-20151116135154655-201247640.png" alt="" width="647" height="91" /></p><br><p>&nbsp;</p><br><p>　　　　（2）给形参命名</p><br><p>　　　　　　为了代码的可读性和可维护性，我们在定义函数时，需要为每个参数名一个名字，这样调用者见名知意，很容易就知道这个参数代表什么意思了。接下来还是在上述加法函数中进行修改，为每个参数名一个名字，并看一下调用方式。修改上面的函数，给第一个形参命名成numberOne, 第二个形参为numberTwo, 下方是修改后的函数。 紧接着sum()函数的调用方式也会有所改变，在调用函数时编译器会给出参数的名称，这样调用者一目了然。</p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> <span style="color: #008000;">//</span><span style="color: #008000;">函数定义</span><br><span style="color: #008080;">2</span> func sum (numberOne number1:Int, numberTwo number2:Int) -&gt;<span style="color: #000000;"> Int{<br></span><span style="color: #008080;">3</span>     <span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br></span><span style="color: #008080;">4</span> <span style="color: #000000;">}<br></span><span style="color: #008080;">5</span><br><span style="color: #008080;">6</span> let sumTwoNubmer = sum(numberOne: <span style="color: #800080;">10</span>, numberTwo: <span style="color: #800080;">20</span>);</pre><br></div><br><p>　　　　 &nbsp;调用上述函数时，下方是编译器给出的提示，一目了然呢。<br /><img style="display: block; margin-left: auto; margin-right: auto;" src="http://images2015.cnblogs.com/blog/545446/201511/545446-20151116141632358-1326285688.png" alt="" width="401" height="119" /></p><br><p>　　　　　关于Swift中参数名的内容，要说明的是在Swift1.0的时候，你可以在参数前面添加上#号，然后参数名就与变量（或者常量）的名字相同，而Swift2.0后这个东西去掉了，因为默认就相当于Swift1.0中添加#号。</p><br><p>&nbsp;</p><br><br>
+<div class="clear"></div><br>            <div id="cnblogs_post_body"><p>　　今天的博客算是比较基础的，还是那句话，基础这东西在什么时候都是最重要的。说到函数，只要是写过程序就肯定知道函数是怎么回事，今天就来讨论一下Swift中的函数的特性以及Swift中的闭包。今天的一些小实例中回类比一下Objective-C中的函数的写法等等。Swift中的函数还是有许多好用的特性的，比如输入参数，使用元组返回多个值， 定义形参名，设定默认参数以及可变参数等等一些好用的特性。而在Swift中的闭包就是Objective-C中的Block, 除了语法不通外，两者的用法是一样的。废话少说，开始今天的主题，先搞一搞Swift中的函数，然后在搞一搞Swift中的闭包。</p><br><p><span style="color: #008000; font-size: 18px;">　　一.Swift中的函数</span></p><br><p>　　　　1. 函数的定义与使用</p><br><p>　　　　　在介绍Swift中的函数之前，我想用Objective-C中的一个简单的加法函数来作为引子，然后类比着实现一下Swift中相同功能的函数。关于函数定义就比较简单了，就是一些语法的东西，下面的代码片段是Objc中求两个整数之和的函数，并返回两个数的和。</p><br><div class="cnblogs_code"><br><pre>-<span style="color: #000000;"> (NSInteger)sumNumber1:(NSInteger) number1<br>                number2:(NSInteger) number2 {<br>    </span><span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br>}</span></pre><br></div><br><p>　　　　函数的功能比较简单了，就是把两个整数传进来，然后返回两个整数的和。接下来将用Swift语言实现，也好通过这个实例来熟悉一下Swift语言中定义函数的语法。下方是Swift语言中求两个整数之和的函数。语法比较简单了，在Swift中定义函数，我们会使用到关键字<span style="color: #ff6600;">func</span>来声明函数。</p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> <span style="color: #008000;">//</span><span style="color: #008000;">函数定义</span><br><span style="color: #008080;">2</span> func sum (number1:Int, number2:Int) -&gt;<span style="color: #000000;"> Int{<br></span><span style="color: #008080;">3</span>     <span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br></span><span style="color: #008080;">4</span> }</pre><br></div><br><p>　　　　用文字来描述Swift定义基本函数的语法就是:<span style="color: #ff6600;"> func <span style="color: #008000;">函数名</span> （形参<span style="color: #008000;">列表</span>） -&gt; <span style="color: #008000;">返回值类型</span> { <span style="color: #008000;">函数体</span>}，<span style="color: #000000;">这样你就可以定义一个函数了。当然，函数定义时还有好多其他的用法，下面会详细介绍。上面函数的调用方法如下：</span></span></p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> let sumTwoNubmer = sum(<span style="color: #800080;">2</span>, number2: <span style="color: #800080;">3</span>);</pre><br></div><br><p>&nbsp;</p><br><p>　　　　2. 函数中的形参列表</p><br><p>　　　　关于函数中的形参列表还是有必要提上一嘴的，因为形参列表作为函数数据源之一，所以把参数列表好好的搞一搞还是很有必要的。参数列表也有很多好用的使用方式，接下来详细的介绍一下函数的形参列表。</p><br><p>　　　　(1) 默认的形参是常量（let）</p><br><p>　　　　　　在函数的形参列表中，默认的形参是常量。也就是相当于用<span style="color: #ff6600;">let</span>关键字对形参进行修饰了。我们可以做个试验，把上面加法函数做一个修改，在加法函数中对number1进行加1操作，你会得到一个错误，这个错误的大体意思就是&ldquo;number1是不可被修改的，因为它是let类型的常量&rdquo;。并且编译器还给人出了Fix-it（修复）的方案，就是在number1前面使用<span style="color: #ff6600;">var</span>关键字进行修饰，使其成为变量，这样才可以修改其值。</p><br><p>　　　　　　上面说这么多，一句话：形参默认是常量，如果你想让其是变量，那么你可以使用var关键字进行修饰，这样被关键字var修饰的变量在函数中就可以被修改。下方就是报的这个错误，和编译器提供的解决方案。（在Objc中默认可以在函数中改变形参的值）</p><br><p><img style="display: block; margin-left: auto; margin-right: auto;" src="http://images2015.cnblogs.com/blog/545446/201511/545446-20151116135154655-201247640.png" alt="" width="647" height="91"></p><br><p>&nbsp;</p><br><p>　　　　（2）给形参命名</p><br><p>　　　　　　为了代码的可读性和可维护性，我们在定义函数时，需要为每个参数名一个名字，这样调用者见名知意，很容易就知道这个参数代表什么意思了。接下来还是在上述加法函数中进行修改，为每个参数名一个名字，并看一下调用方式。修改上面的函数，给第一个形参命名成numberOne, 第二个形参为numberTwo, 下方是修改后的函数。 紧接着sum()函数的调用方式也会有所改变，在调用函数时编译器会给出参数的名称，这样调用者一目了然。</p><br><div class="cnblogs_code"><br><pre><span style="color: #008080;">1</span> <span style="color: #008000;">//</span><span style="color: #008000;">函数定义</span><br><span style="color: #008080;">2</span> func sum (numberOne number1:Int, numberTwo number2:Int) -&gt;<span style="color: #000000;"> Int{<br></span><span style="color: #008080;">3</span>     <span style="color: #0000ff;">return</span> number1 +<span style="color: #000000;"> number2;<br></span><span style="color: #008080;">4</span> <span style="color: #000000;">}<br></span><span style="color: #008080;">5</span><br><span style="color: #008080;">6</span> let sumTwoNubmer = sum(numberOne: <span style="color: #800080;">10</span>, numberTwo: <span style="color: #800080;">20</span>);</pre><br></div><br><p>　　　　 &nbsp;调用上述函数时，下方是编译器给出的提示，一目了然呢。<br><img style="display: block; margin-left: auto; margin-right: auto;" src="http://images2015.cnblogs.com/blog/545446/201511/545446-20151116141632358-1326285688.png" alt="" width="401" height="119"></p><br><p>　　　　　关于Swift中参数名的内容，要说明的是在Swift1.0的时候，你可以在参数前面添加上#号，然后参数名就与变量（或者常量）的名字相同，而Swift2.0后这个东西去掉了，因为默认就相当于Swift1.0中添加#号。</p><br><p>&nbsp;</p><br><br>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/posts/9416/#more" rel="contents">
@@ -1690,7 +1849,7 @@
 
       
         
-          <p><p>swift 中关于取子串有4 个方法</p></p>
+          <p></p><p>swift 中关于取子串有4 个方法</p><p></p>
 <pre><code>str.index(after: String.Index)
 str.index(before: String.Index)
 str.index(String.Index, offsetBy: String.IndexDistance)
@@ -1733,142 +1892,6 @@ str[range]  // Hello, playgroun</code></pre>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/posts/3254/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="blog.51zan.cc/posts/10633/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="王森">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/uploads/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一个精通猪肉炖粉条的程序猿">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/posts/10633/" itemprop="url">
-                  myResume
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-16T18:45:59+08:00">
-                2017-03-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/posts/10633/" class="leancloud_visitors" data-flag-title="myResume">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <html><head><title>简历预览</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="robots" content="nofollow" /><link rel="stylesheet" type="text/css" href="https://img00.zhaopin.cn/2012/css/reset.min.css" media="all" /><link rel="stylesheet" type="text/css" href="https://i.zhaopin.com/Content/css/resume_preview.css" media="all" /></head><body><div class="resumeBody"><div class="summary"><h1>王森</h1>男<span class="ver-line">|</span>未婚<span class="ver-line">|</span>1992年2月生<span class="ver-line">|</span><br>            户口：河南-南阳<span class="ver-line">|</span><br>              现居住于:北京-朝阳区<br />2.5年工作经验<br>            <span class="ver-line">|</span>团员<p>Tel:15617877692</p><p><br>              E-mail：<a href="mailto:sslxws@163.com">sslxws@163.com</a></p><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/posts/10633/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1954,7 +1977,7 @@ str[range]  // Hello, playgroun</code></pre>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2037,8 +2060,8 @@ str[range]  // Hello, playgroun</code></pre>
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
